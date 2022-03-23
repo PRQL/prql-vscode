@@ -1,0 +1,38 @@
+{
+    "name": "prql",
+    "displayName": "PRQL",
+    "description": "Modern language for transforming data",
+    "repository": {
+        "url": "https://github.com/aljazerzen/pqrl-code.git"
+    },
+    "publisher": "prql",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.65.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "prql",
+                "aliases": [
+                    "PRQL",
+                    "prql"
+                ],
+                "extensions": [
+                    ".prql"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "prql",
+                "scopeName": "source.prql",
+                "path": "./syntaxes/prql.tmLanguage.json"
+            }
+        ]
+    }
+}

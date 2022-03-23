@@ -1,0 +1,83 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "PRQL",
+	"patterns": [
+		{
+			"include": "#comment"
+		},
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#named-args"
+		},
+		{
+			"include": "#function-call"
+		},
+		{
+			"include": "#s-strings"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"comment": {
+			"name": "comment.line",
+			"match": "#.*$"
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.prql",
+					"match": "\\b(from|select|derive|filter|take|sort|join|aggregate|func|and|or|not|null)\\b"
+				}
+			]
+		},
+		"named-args": {
+			"name": "support.type",
+			"match": "\\w+:(?!\\s)"
+		},
+		"function-call": {
+			"match": "\\b(\\w+)\\b(\\s+(\\w|[.])+)+(\\s|$|,)",
+			"captures": {
+				"1": {
+					"name": "support.function"
+				},
+				"2": {
+					"name": "variable"
+				}
+			}
+		},
+		"ident": {
+			"name": "variable",
+			"match": "\\b(\\w+)\\b"
+		},
+		"s-strings": {
+			"name": "string.interpolated",
+			"begin": "s\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "keyword.operator",
+					"patterns": [
+						{ "include": "#" }
+					],
+					"match": "\\{.*}"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.prql",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.prql",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.prql"
+}
