@@ -30,16 +30,16 @@
 			"patterns": [
 				{
 					"name": "keyword.control.prql",
-					"match": "\\b(from|select|derive|filter|take|sort|join|aggregate|func|and|or|not|null)\\b"
+					"match": "\\b(from|select|derive|filter|take|sort|join|aggregate|func|and|or|not|null|window|table|lag)\\b"
 				}
 			]
 		},
 		"named-args": {
 			"name": "support.type",
-			"match": "\\w+:(?!\\s)"
+			"match": "\\w+\\s*:"
 		},
 		"function-call": {
-			"match": "\\b(\\w+)\\b(\\s+(\\w|[.])+)+(\\s|$|,)",
+			"match": "\\b(\\w+)\\b(\\s+(\\w|[.])+)+(\\s|$|,|])",
 			"captures": {
 				"1": {
 					"name": "support.function"
@@ -59,21 +59,21 @@
 			"end": "\"",
 			"patterns": [
 				{
-					"name": "keyword.operator",
+					"name": "support.variable",
 					"patterns": [
 						{ "include": "#" }
 					],
-					"match": "\\{.*}"
+					"match": "\\{[^}]*}"
 				}
 			]
 		},
 		"strings": {
-			"name": "string.quoted.double.prql",
+			"name": "string.quoted.double",
 			"begin": "\"",
 			"end": "\"",
 			"patterns": [
 				{
-					"name": "constant.character.escape.prql",
+					"name": "constant.character.escape",
 					"match": "\\\\."
 				}
 			]
