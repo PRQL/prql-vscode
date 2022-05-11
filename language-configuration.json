@@ -23,8 +23,8 @@
     ],
     "folding": {
         "markers": {
-            "start": "\\[",
-            "end": "]"
+            "start": "\\)",
+            "end": ")"
         }
     },
 }
