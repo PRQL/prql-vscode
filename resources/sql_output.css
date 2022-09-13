@@ -1,0 +1,33 @@
+@media (prefers-color-scheme: light) {
+  .shiki.dark-plus {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .shiki.light-plus {
+    display: none;
+  }
+}
+
+:root {
+  --one-color: var(--vscode-focusBorder);
+  --shiki-color-text: var(--vscode-editor-foreground);
+  --shiki-color-background: var(--vscode-editor-background);
+  --shiki-token-constant: var(--one-color);
+  --shiki-token-string: var(--one-color);
+  --shiki-token-comment: var(--one-color);
+  --shiki-token-keyword: var(--one-color);
+  --shiki-token-parameter: var(--one-color);
+  --shiki-token-function: var(--one-color);
+  --shiki-token-string-expression: var(--one-color);
+  --shiki-token-punctuation: var(--one-color);
+  --shiki-token-link: var(--one-color);
+}
+
+body,
+code {
+  font-family: var(--vscode-editor-font-family) !important;
+  font-size: var(--vscode-editor-font-size) !important;
+  font-weight: var(--vscode-editor-font-weight) !important;
+}
