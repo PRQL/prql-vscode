@@ -72,7 +72,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
   panel.webview.html = getCompiledTemplate(context, panel.webview);
 
   let previousText = "";
-  const sendText = (editor?: vscode.TextEditor) => {
+  const sendTextIfChanged = (editor?: vscode.TextEditor) => {
     if (panel.visible && editor && isPrqlDocument(editor)) {
       const text = editor.document.getText();
 
@@ -86,14 +86,14 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
   const disposables = [
     vscode.workspace.onDidChangeTextDocument,
     vscode.window.onDidChangeActiveTextEditor,
-  ].map(fn => fn(() => sendText(vscode.window.activeTextEditor)));
+  ].map(fn => fn(() => sendTextIfChanged(vscode.window.activeTextEditor)));
 
   panel.onDidDispose(() => {
     disposables.forEach(d => d.dispose());
     onDidDispose();
   }, undefined, context.subscriptions);
 
-  sendText(vscode.window.activeTextEditor);
+  sendTextIfChanged(vscode.window.activeTextEditor);
 
   return panel;
 }
