@@ -72,30 +72,24 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
   );
   panel.webview.html = getCompiledTemplate(context, panel.webview);
 
-  let previousText = "";
-  const sendTextIfChanged = (force = false) => {
+  const sendText = () => {
     const editor = vscode.window.activeTextEditor;
 
-    if (force) {
-      compilePrql(previousText).then(result => panel.webview.postMessage(result));
-    } else if (panel.visible && editor && isPrqlDocument(editor)) {
+    if (panel.visible && editor && isPrqlDocument(editor)) {
       const text = editor.document.getText();
 
-      if (text !== previousText) {
-        previousText = text;
-        compilePrql(text).then(result => panel.webview.postMessage(result));
-      }
+      compilePrql(text).then(result => panel.webview.postMessage(result));
     }
   };
 
   const disposables = [
     vscode.workspace.onDidChangeTextDocument,
     vscode.window.onDidChangeActiveTextEditor,
-  ].map(fn => fn(() => sendTextIfChanged()));
+  ].map(fn => fn(sendText));
 
-  disposables.push(vscode.workspace.onDidChangeConfiguration(() => {
+  disposables.push(vscode.window.onDidChangeActiveColorTheme(() => {
     highlighter = undefined;
-    sendTextIfChanged(true);
+    sendText();
   }));
 
   panel.onDidDispose(() => {
@@ -103,7 +97,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
     onDidDispose();
   }, undefined, context.subscriptions);
 
-  sendTextIfChanged();
+  sendText();
 
   return panel;
 }
