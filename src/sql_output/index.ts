@@ -38,7 +38,7 @@ async function getHighlighter(): Promise<shiki.Highlighter> {
   return highlighter = await shiki.getHighlighter({ theme: getThemeName() });
 }
 
-async function compilePrsql(text: string): Promise<CompilationResult> {
+async function compilePrql(text: string): Promise<CompilationResult> {
   try {
     const sql = to_sql(text);
     const highlighter = await getHighlighter();
@@ -77,13 +77,13 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
     const editor = vscode.window.activeTextEditor;
 
     if (force) {
-      compilePrsql(previousText).then(result => panel.webview.postMessage(result));
+      compilePrql(previousText).then(result => panel.webview.postMessage(result));
     } else if (panel.visible && editor && isPrqlDocument(editor)) {
       const text = editor.document.getText();
 
       if (text !== previousText) {
         previousText = text;
-        compilePrsql(text).then(result => panel.webview.postMessage(result));
+        compilePrql(text).then(result => panel.webview.postMessage(result));
       }
     }
   };
