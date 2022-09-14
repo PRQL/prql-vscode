@@ -38,7 +38,8 @@ async function getHighlighter(): Promise<shiki.Highlighter> {
   return highlighter = await shiki.getHighlighter({ theme: getThemeName() });
 }
 
-async function compilePrql(text: string): Promise<CompilationResult> {
+async function compilePrql(text: string, lastOkHtml: string | undefined):
+  Promise<CompilationResult> {
   try {
     const sql = to_sql(text);
     const highlighter = await getHighlighter();
@@ -53,8 +54,25 @@ async function compilePrql(text: string): Promise<CompilationResult> {
   } catch (err: any) {
     return {
       status: "error",
-      content: err.message.split("\n").slice(1, -1).join("\n")
+      content: err.message.split("\n").slice(1, -1).join("\n"),
+      last_html: lastOkHtml
     };
+  }
+}
+
+let lastOkHtml: string | undefined;
+
+function sendText(panel: vscode.WebviewPanel) {
+  const editor = vscode.window.activeTextEditor;
+
+  if (panel.visible && editor && isPrqlDocument(editor)) {
+    const text = editor.document.getText();
+    compilePrql(text, lastOkHtml).then(result => {
+      if (result.status === "ok") {
+        lastOkHtml = result.content;
+      }
+      panel.webview.postMessage(result)
+    });
   }
 }
 
@@ -72,24 +90,24 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
   );
   panel.webview.html = getCompiledTemplate(context, panel.webview);
 
-  const sendText = () => {
-    const editor = vscode.window.activeTextEditor;
+  const disposables: vscode.Disposable[] = [];
 
-    if (panel.visible && editor && isPrqlDocument(editor)) {
-      const text = editor.document.getText();
+  disposables.push(vscode.workspace.onDidChangeTextDocument(() => {
+    sendText(panel);
+  }));
 
-      compilePrql(text).then(result => panel.webview.postMessage(result));
+  let lastEditor: vscode.TextEditor | undefined = undefined;
+  disposables.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+    if (editor && editor !== lastEditor) {
+      lastEditor = editor;
+      lastOkHtml = undefined;
+      sendText(panel);
     }
-  };
-
-  const disposables = [
-    vscode.workspace.onDidChangeTextDocument,
-    vscode.window.onDidChangeActiveTextEditor,
-  ].map(fn => fn(sendText));
+  }));
 
   disposables.push(vscode.window.onDidChangeActiveColorTheme(() => {
     highlighter = undefined;
-    sendText();
+    sendText(panel);
   }));
 
   panel.onDidDispose(() => {
@@ -97,7 +115,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
     onDidDispose();
   }, undefined, context.subscriptions);
 
-  sendText();
+  sendText(panel);
 
   return panel;
 }

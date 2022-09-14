@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 export interface CompilationResult {
   status: "ok" | "error";
   content: string;
+  last_html?: string | undefined;
 }
 
 export function getResourceUri(context: vscode.ExtensionContext, filename: string) {
