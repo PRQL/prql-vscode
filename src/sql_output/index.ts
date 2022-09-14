@@ -2,10 +2,7 @@ import * as vscode from "vscode";
 import { to_sql } from "prql-js";
 import * as shiki from "shiki";
 import { readFileSync } from "node:fs";
-
-function getResourceUri(context: vscode.ExtensionContext, filename: string) {
-  return vscode.Uri.joinPath(context.extensionUri, "resources", filename);
-}
+import { CompilationResult, getResourceUri, isPrqlDocument } from "./utils";
 
 function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.Webview): string {
   const template = readFileSync(getResourceUri(context, "sql_output.html").fsPath, "utf-8");
@@ -16,15 +13,6 @@ function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.W
     .replace(/##CSP_SOURCE##/g, webview.cspSource)
     .replace("##JS_URI##", webview.asWebviewUri(templateJS).toString())
     .replace("##CSS_URI##", webview.asWebviewUri(templateCss).toString())
-}
-
-function isPrqlDocument(editor: vscode.TextEditor): boolean {
-  return editor.document.fileName.endsWith(".prql");
-}
-
-interface CompilationResult {
-  status: "ok" | "error";
-  content: string;
 }
 
 let highlighter: shiki.Highlighter | undefined;
@@ -41,14 +29,14 @@ async function compilePrsql(text: string): Promise<CompilationResult> {
   try {
     const sql = to_sql(text);
     const highlighter = await getHighlighter();
-      const highlighted = highlighter.codeToHtml(sql ? sql : "", {
-        lang: "sql"
-      });
+    const highlighted = highlighter.codeToHtml(sql ? sql : "", {
+      lang: "sql"
+    });
 
-      return {
-        status: "ok",
-        content: highlighted
-      };
+    return {
+      status: "ok",
+      content: highlighted
+    };
   } catch (err: any) {
     return {
       status: "error",
@@ -79,7 +67,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
       if (text !== previousText) {
         previousText = text;
         compilePrsql(text).then(result => panel.webview.postMessage(result));
-      } 
+      }
     }
   };
 
