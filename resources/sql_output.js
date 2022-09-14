@@ -7,6 +7,7 @@ window.addEventListener("message", event => {
   } else {
     if (last_html) {
       template.getElementById("last_html").innerHTML = last_html;
+      template.getElementById("separator").style.display = "block";
     }
     const el = template.getElementById("error_message");
     message = content.length > 0 ? content : "<h2>Syntax error!</h2>";

@@ -36,6 +36,7 @@ hr {
   border-width: 1px;
   border-style: solid;
   border-color: var(--vscode-editorError-foreground);
+  display: none;
 }
 
 #error_message {
