@@ -83,15 +83,13 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
     }
   };
 
-  const interval = setInterval(() => sendText(vscode.window.activeTextEditor), 1000);
-  const onDidChangeActiveTextEditorDisposable = vscode.window.onDidChangeActiveTextEditor(sendText);
-  const onDidSaveTextDocumentDisposable = vscode.workspace.onDidSaveTextDocument(
-    () => sendText(vscode.window.activeTextEditor));
+  const disposables = [
+    vscode.workspace.onDidChangeTextDocument,
+    vscode.window.onDidChangeActiveTextEditor,
+  ].map(fn => fn(() => sendText(vscode.window.activeTextEditor)));
 
   panel.onDidDispose(() => {
-    clearInterval(interval);
-    onDidChangeActiveTextEditorDisposable.dispose();
-    onDidSaveTextDocumentDisposable.dispose();
+    disposables.forEach(d => d.dispose());
     onDidDispose();
   }, undefined, context.subscriptions);
 
