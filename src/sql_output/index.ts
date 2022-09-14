@@ -95,7 +95,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
     onDidDispose();
   }, undefined, context.subscriptions);
 
-  sendText();
+  sendText(vscode.window.activeTextEditor);
 
   return panel;
 }
