@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { to_sql } from "prql-js";
 import * as shiki from "shiki";
 import { readFileSync } from "node:fs";
-import { CompilationResult, getResourceUri, isPrqlDocument } from "./utils";
+import { CompilationResult, getResourceUri, isPrqlDocument, normalizeThemeName } from "./utils";
 
 function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.Webview): string {
   const template = readFileSync(getResourceUri(context, "sql_output.html").fsPath, "utf-8");
@@ -15,6 +15,19 @@ function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.W
     .replace("##CSS_URI##", webview.asWebviewUri(templateCss).toString())
 }
 
+function getThemeName(): string {
+  const currentThemeName = vscode.workspace.getConfiguration("workbench")
+    .get<string>("colorTheme", "dark-plus");
+
+  for (const themeName of [currentThemeName, normalizeThemeName(currentThemeName)]) {
+    if (shiki.BUNDLED_THEMES.includes(themeName as shiki.Theme)) {
+      return themeName;
+    }
+  }
+
+  return "css-variables";
+}
+
 let highlighter: shiki.Highlighter | undefined;
 
 async function getHighlighter(): Promise<shiki.Highlighter> {
@@ -22,7 +35,7 @@ async function getHighlighter(): Promise<shiki.Highlighter> {
     return Promise.resolve(highlighter);
   }
 
-  return highlighter = await shiki.getHighlighter({ theme: "css-variables" });
+  return highlighter = await shiki.getHighlighter({ theme: getThemeName() });
 }
 
 async function compilePrsql(text: string): Promise<CompilationResult> {
@@ -60,8 +73,12 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
   panel.webview.html = getCompiledTemplate(context, panel.webview);
 
   let previousText = "";
-  const sendTextIfChanged = (editor?: vscode.TextEditor) => {
-    if (panel.visible && editor && isPrqlDocument(editor)) {
+  const sendTextIfChanged = (force = false) => {
+    const editor = vscode.window.activeTextEditor;
+
+    if (force) {
+      compilePrsql(previousText).then(result => panel.webview.postMessage(result));
+    } else if (panel.visible && editor && isPrqlDocument(editor)) {
       const text = editor.document.getText();
 
       if (text !== previousText) {
@@ -74,14 +91,19 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
   const disposables = [
     vscode.workspace.onDidChangeTextDocument,
     vscode.window.onDidChangeActiveTextEditor,
-  ].map(fn => fn(() => sendTextIfChanged(vscode.window.activeTextEditor)));
+  ].map(fn => fn(() => sendTextIfChanged()));
+
+  disposables.push(vscode.workspace.onDidChangeConfiguration(() => {
+    highlighter = undefined;
+    sendTextIfChanged(true);
+  }));
 
   panel.onDidDispose(() => {
     disposables.forEach(d => d.dispose());
     onDidDispose();
   }, undefined, context.subscriptions);
 
-  sendTextIfChanged(vscode.window.activeTextEditor);
+  sendTextIfChanged();
 
   return panel;
 }

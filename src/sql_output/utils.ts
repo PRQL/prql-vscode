@@ -12,3 +12,10 @@ export function getResourceUri(context: vscode.ExtensionContext, filename: strin
 export function isPrqlDocument(editor: vscode.TextEditor): boolean {
   return editor.document.fileName.endsWith(".prql");
 }
+
+export function normalizeThemeName(currentTheme: string): string {
+  return currentTheme
+    .toLowerCase()
+    .replace("theme", "")
+    .replace(/\s+/g, "-");
+}
