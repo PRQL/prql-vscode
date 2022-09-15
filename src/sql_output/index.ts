@@ -76,6 +76,10 @@ function sendText(panel: vscode.WebviewPanel) {
   }
 }
 
+function sendThemeChanged(panel: vscode.WebviewPanel) {
+  panel.webview.postMessage({ status: "theme-changed" });
+}
+
 function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () => any): vscode.WebviewPanel {
   const panel = vscode.window.createWebviewPanel("prqlSqlOutputPanel", "PRQL - SQL Output",
     {
@@ -108,7 +112,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
   disposables.push(vscode.window.onDidChangeActiveColorTheme(() => {
     highlighter = undefined;
     lastOkHtml = undefined;
-    sendText(panel);
+    sendThemeChanged(panel);
   }));
 
   panel.onDidDispose(() => {
