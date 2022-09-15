@@ -9,9 +9,7 @@ window.addEventListener("message", event => {
       template.getElementById("last_html").innerHTML = last_html;
       template.getElementById("separator").style.display = "block";
     }
-    const el = template.getElementById("error_message");
-    message = content.length > 0 ? content : "<h2>Syntax error!</h2>";
-    el.innerHTML = message;
+    template.getElementById("error_message").innerHTML = content;
   }
 
   document.getElementById("result").replaceChildren(template);

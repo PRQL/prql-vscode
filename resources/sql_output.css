@@ -39,6 +39,10 @@ hr {
   display: none;
 }
 
+h3 {
+  color: var(--vscode-editorError-foreground);
+}
+
 #error_message {
   color: var(--vscode-editorError-foreground);
   overflow-y: scroll;
