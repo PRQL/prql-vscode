@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { to_sql } from "prql-js";
 import * as shiki from "shiki";
 import { readFileSync } from "node:fs";
-import { CompilationResult, getResourceUri, isPrqlDocument, normalizeThemeName } from "./utils";
+import { CompilationResult, debounce, getResourceUri, isPrqlDocument, normalizeThemeName } from "./utils";
 
 function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.Webview): string {
   const template = readFileSync(getResourceUri(context, "sql_output.html").fsPath, "utf-8");
@@ -97,9 +97,9 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
 
   const disposables: vscode.Disposable[] = [];
 
-  disposables.push(vscode.workspace.onDidChangeTextDocument(() => {
+  disposables.push(vscode.workspace.onDidChangeTextDocument(debounce(() => {
     sendText(panel);
-  }));
+  }, 10)));
 
   let lastEditor: vscode.TextEditor | undefined = undefined;
   disposables.push(vscode.window.onDidChangeActiveTextEditor(editor => {
