@@ -11,7 +11,11 @@ window.addEventListener("message", event => {
         template.getElementById("last_html").innerHTML = last_html;
         template.getElementById("separator").style.display = "block";
       }
-      template.getElementById("error_message").innerHTML = content;
+      const el = template.getElementById("error_message");
+      if (content.length > 0) {
+        el.innerHTML = content;
+        el.style.display = "block";
+      }
       break;
     case "theme-changed":
       // Content already in the template
