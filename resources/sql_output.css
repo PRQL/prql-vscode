@@ -31,3 +31,22 @@ code {
   font-size: var(--vscode-editor-font-size) !important;
   font-weight: var(--vscode-editor-font-weight) !important;
 }
+
+hr {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--vscode-editorError-foreground);
+  display: none;
+}
+
+h3 {
+  color: var(--vscode-editorError-foreground);
+  margin-bottom: 0;
+}
+
+#error_message {
+  display: none;
+  margin-top: 10px;
+  color: var(--vscode-editorError-foreground);
+  overflow-y: scroll;
+}

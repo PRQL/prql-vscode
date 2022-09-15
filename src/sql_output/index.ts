@@ -2,10 +2,7 @@ import * as vscode from "vscode";
 import { to_sql } from "prql-js";
 import * as shiki from "shiki";
 import { readFileSync } from "node:fs";
-
-function getResourceUri(context: vscode.ExtensionContext, filename: string) {
-  return vscode.Uri.joinPath(context.extensionUri, "resources", filename);
-}
+import { CompilationResult, debounce, getResourceUri, isPrqlDocument, normalizeThemeName } from "./utils";
 
 function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.Webview): string {
   const template = readFileSync(getResourceUri(context, "sql_output.html").fsPath, "utf-8");
@@ -18,13 +15,17 @@ function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.W
     .replace("##CSS_URI##", webview.asWebviewUri(templateCss).toString())
 }
 
-function isPrqlDocument(editor: vscode.TextEditor): boolean {
-  return editor.document.fileName.endsWith(".prql");
-}
+function getThemeName(): string {
+  const currentThemeName = vscode.workspace.getConfiguration("workbench")
+    .get<string>("colorTheme", "dark-plus");
 
-interface CompilationResult {
-  status: "ok" | "error";
-  content: string;
+  for (const themeName of [currentThemeName, normalizeThemeName(currentThemeName)]) {
+    if (shiki.BUNDLED_THEMES.includes(themeName as shiki.Theme)) {
+      return themeName;
+    }
+  }
+
+  return "css-variables";
 }
 
 let highlighter: shiki.Highlighter | undefined;
@@ -34,27 +35,49 @@ async function getHighlighter(): Promise<shiki.Highlighter> {
     return Promise.resolve(highlighter);
   }
 
-  return highlighter = await shiki.getHighlighter({ theme: "css-variables" });
+  return highlighter = await shiki.getHighlighter({ theme: getThemeName() });
 }
 
-async function compilePrsql(text: string): Promise<CompilationResult> {
+async function compilePrql(text: string, lastOkHtml: string | undefined):
+  Promise<CompilationResult> {
   try {
     const sql = to_sql(text);
     const highlighter = await getHighlighter();
-      const highlighted = highlighter.codeToHtml(sql ? sql : "", {
-        lang: "sql"
-      });
+    const highlighted = highlighter.codeToHtml(sql ? sql : "", {
+      lang: "sql"
+    });
 
-      return {
-        status: "ok",
-        content: highlighted
-      };
+    return {
+      status: "ok",
+      content: highlighted
+    };
   } catch (err: any) {
     return {
       status: "error",
-      content: err.message.split("\n").slice(1, -1).join("\n")
+      content: err.message.split("\n").slice(1, -1).join("\n"),
+      last_html: lastOkHtml
     };
   }
+}
+
+let lastOkHtml: string | undefined;
+
+function sendText(panel: vscode.WebviewPanel) {
+  const editor = vscode.window.activeTextEditor;
+
+  if (panel.visible && editor && isPrqlDocument(editor)) {
+    const text = editor.document.getText();
+    compilePrql(text, lastOkHtml).then(result => {
+      if (result.status === "ok") {
+        lastOkHtml = result.content;
+      }
+      panel.webview.postMessage(result)
+    });
+  }
+}
+
+function sendThemeChanged(panel: vscode.WebviewPanel) {
+  panel.webview.postMessage({ status: "theme-changed" });
 }
 
 function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () => any): vscode.WebviewPanel {
@@ -70,32 +93,35 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
     }
   );
   panel.webview.html = getCompiledTemplate(context, panel.webview);
+  panel.iconPath = getResourceUri(context, "favicon.ico");
 
-  let previousText = "";
-  const sendText = (editor?: vscode.TextEditor) => {
-    if (panel.visible && editor && isPrqlDocument(editor)) {
-      const text = editor.document.getText();
+  const disposables: vscode.Disposable[] = [];
 
-      if (text !== previousText) {
-        previousText = text;
-        compilePrsql(text).then(result => panel.webview.postMessage(result));
-      } 
+  disposables.push(vscode.workspace.onDidChangeTextDocument(debounce(() => {
+    sendText(panel);
+  }, 10)));
+
+  let lastEditor: vscode.TextEditor | undefined = undefined;
+  disposables.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+    if (editor && editor !== lastEditor) {
+      lastEditor = editor;
+      lastOkHtml = undefined;
+      sendText(panel);
     }
-  };
+  }));
 
-  const interval = setInterval(() => sendText(vscode.window.activeTextEditor), 1000);
-  const onDidChangeActiveTextEditorDisposable = vscode.window.onDidChangeActiveTextEditor(sendText);
-  const onDidSaveTextDocumentDisposable = vscode.workspace.onDidSaveTextDocument(
-    () => sendText(vscode.window.activeTextEditor));
+  disposables.push(vscode.window.onDidChangeActiveColorTheme(() => {
+    highlighter = undefined;
+    lastOkHtml = undefined;
+    sendThemeChanged(panel);
+  }));
 
   panel.onDidDispose(() => {
-    clearInterval(interval);
-    onDidChangeActiveTextEditorDisposable.dispose();
-    onDidSaveTextDocumentDisposable.dispose();
+    disposables.forEach(d => d.dispose());
     onDidDispose();
   }, undefined, context.subscriptions);
 
-  sendText();
+  sendText(panel);
 
   return panel;
 }

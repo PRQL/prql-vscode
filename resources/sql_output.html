@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ##CSP_SOURCE##; style-src-attr 'unsafe-inline'; script-src ##CSP_SOURCE##;">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; style-src ##CSP_SOURCE##; style-src-attr 'unsafe-inline'; script-src ##CSP_SOURCE##;">
   <link href="##CSS_URI##" rel="stylesheet">
   <script src="##JS_URI##" type="application/javascript"></script>
   <title>PRQL SQL Output Panel</title>
@@ -15,12 +16,18 @@
 </template>
 
 <template id="status-error">
-  <h2>Syntax error!</h2>
-  <pre></pre>
+  <h3>Syntax error!</h3>
+  <pre id="error_message"></pre>
+  <hr id="separator">
+  <pre id="last_html"></pre>
+</template>
+
+<template id="status-theme-changed">
+  <span>Theme has changed. Waiting for a PRQL file...</span>
 </template>
 
 <body>
-  <div id="result">Loading...</div>
+  <div id="result">Waiting for a PRQL file...</div>
 </body>
 
 </html>
