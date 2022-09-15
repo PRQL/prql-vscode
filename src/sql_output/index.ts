@@ -93,6 +93,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
     }
   );
   panel.webview.html = getCompiledTemplate(context, panel.webview);
+  panel.iconPath = getResourceUri(context, "favicon.ico");
 
   const disposables: vscode.Disposable[] = [];
 
