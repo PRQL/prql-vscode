@@ -107,6 +107,7 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
 
   disposables.push(vscode.window.onDidChangeActiveColorTheme(() => {
     highlighter = undefined;
+    lastOkHtml = undefined;
     sendText(panel);
   }));
 
