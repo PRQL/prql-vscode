@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { SourceLocation } from "prql-js";
 
 export interface CompilationResult {
   status: "ok" | "error";
