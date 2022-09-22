@@ -46,6 +46,7 @@ h3 {
 #error-container {
   overflow-x: scroll;
   color: var(--vscode-editorError-foreground);
+  background-color: var(--vscode-editor-background);
 }
 
 .error-container-fixed {
