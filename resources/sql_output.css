@@ -32,21 +32,31 @@ code {
   font-weight: var(--vscode-editor-font-weight) !important;
 }
 
-hr {
-  border-width: 1px;
-  border-style: solid;
-  border-color: var(--vscode-editorError-foreground);
-  display: none;
-}
-
 h3 {
+  margin: 10px 0 0 10px;
   color: var(--vscode-editorError-foreground);
-  margin-bottom: 0;
 }
 
-#error_message {
-  display: none;
-  margin-top: 10px;
-  color: var(--vscode-editorError-foreground);
+#last-html {
   overflow-y: scroll;
+  max-height: 80vh;
+  margin-top: 0px;
+}
+
+#error-container {
+  overflow-x: scroll;
+  color: var(--vscode-editorError-foreground);
+  background-color: var(--vscode-editor-background);
+}
+
+.error-container-fixed {
+  left: 20px;
+  right: 20px;
+  bottom: 0;
+  position: fixed;
+  border-top: 2px solid var(--vscode-editorError-foreground);
+}
+
+#error-message {
+  padding-left: 10px;
 }

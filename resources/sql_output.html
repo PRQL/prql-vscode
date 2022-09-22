@@ -16,10 +16,13 @@
 </template>
 
 <template id="status-error">
-  <h3>Syntax error!</h3>
-  <pre id="error_message"></pre>
-  <hr id="separator">
-  <pre id="last_html"></pre>
+  <div class="error-inner">
+    <pre id="last-html"></pre>
+    <div id="error-container">
+      <h3>Syntax error!</h3>
+      <pre id="error-message"></pre>
+    </div>
+  </div>
 </template>
 
 <template id="status-theme-changed">
