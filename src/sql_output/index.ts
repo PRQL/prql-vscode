@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
-import { to_sql } from "prql-js";
+import { compile } from "prql-js";
 import * as shiki from "shiki";
 import { readFileSync } from "node:fs";
-import { CompilationResult, debounce, getResourceUri, isPrqlDocument, normalizeThemeName } from "./utils";
+import { CompilationResult, debounce, getResourceUri, normalizeThemeName } from "./utils";
+import { isPrqlDocument } from "../utils";
 
 function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.Webview): string {
   const template = readFileSync(getResourceUri(context, "sql_output.html").fsPath, "utf-8");
@@ -40,24 +41,27 @@ async function getHighlighter(): Promise<shiki.Highlighter> {
 
 async function compilePrql(text: string, lastOkHtml: string | undefined):
   Promise<CompilationResult> {
-  try {
-    const sql = to_sql(text);
-    const highlighter = await getHighlighter();
-    const highlighted = highlighter.codeToHtml(sql ? sql : "", {
-      lang: "sql"
-    });
+  const result = compile(text);
 
-    return {
-      status: "ok",
-      content: highlighted
-    };
-  } catch (err: any) {
+  if (result.error) {
     return {
       status: "error",
-      content: err.message.split("\n").slice(1, -1).join("\n"),
+      error: {
+        message: result.error.message,
+      },
       last_html: lastOkHtml
     };
   }
+
+  const highlighter = await getHighlighter();
+  const highlighted = highlighter.codeToHtml(result.sql ? result.sql : "", {
+    lang: "sql"
+  });
+
+  return {
+    status: "ok",
+    html: highlighted
+  };
 }
 
 let lastOkHtml: string | undefined;
@@ -69,7 +73,7 @@ function sendText(panel: vscode.WebviewPanel) {
     const text = editor.document.getText();
     compilePrql(text, lastOkHtml).then(result => {
       if (result.status === "ok") {
-        lastOkHtml = result.content;
+        lastOkHtml = result.html;
       }
       panel.webview.postMessage(result)
     });
