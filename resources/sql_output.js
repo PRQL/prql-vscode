@@ -2,19 +2,21 @@ window.addEventListener("message", event => {
   const { status, content, last_html } = event.data;
   const template = document.getElementById(`status-${status}`).content.cloneNode(true);
 
+  const el = name => template.getElementById(name);
+
   switch (status) {
     case "ok":
       template.lastElementChild.innerHTML = content;
       break;
     case "error":
       if (last_html) {
-        template.getElementById("last_html").innerHTML = last_html;
-        template.getElementById("separator").style.display = "block";
+        el("last-html").innerHTML = last_html;
+        el("error-container").classList.add("error-container-fixed");
       }
-      const el = template.getElementById("error_message");
+
       if (content.length > 0) {
-        el.innerHTML = content;
-        el.style.display = "block";
+        el("error-message").innerHTML = content;
+        el("error-container").style.display = "block";
       }
       break;
     case "theme-changed":
