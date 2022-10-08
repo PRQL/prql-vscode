@@ -1,70 +1,69 @@
 {
-    "name": "prql",
-    "displayName": "PRQL",
-    "description": "Modern language for transforming data",
-    "repository": {
-        "url": "https://github.com/prql/prql-code.git"
-    },
-    "publisher": "prql",
-    "version": "0.3.0",
-    "engines": {
-        "vscode": "^1.65.0"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
-    "activationEvents": [
-        "onLanguage:prql",
-        "onCommand:prqlSqlOutputPanel.open"
-    ],
-    "source": "src/extension.ts",
-    "main": "out/extension.js",
-    "contributes": {
-        "languages": [
-            {
-                "id": "prql",
-                "aliases": [
-                    "PRQL",
-                    "prql"
-                ],
-                "extensions": [
-                    ".prql"
-                ],
-                "configuration": "./language-configuration.json"
-            }
+  "name": "prql",
+  "displayName": "PRQL",
+  "description": "Modern language for transforming data",
+  "repository": {
+    "url": "https://github.com/prql/prql-code.git"
+  },
+  "publisher": "prql",
+  "version": "0.3.0",
+  "engines": {
+    "vscode": "^1.65.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:prql",
+    "onCommand:prqlSqlOutputPanel.open"
+  ],
+  "source": "src/extension.ts",
+  "main": "out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "prql",
+        "aliases": [
+          "PRQL",
+          "prql"
         ],
-        "grammars": [
-            {
-                "language": "prql",
-                "scopeName": "source.prql",
-                "path": "./syntaxes/prql.tmLanguage.json"
-            }
+        "extensions": [
+          ".prql"
         ],
-        "commands": [
-            {
-                "command": "prqlSqlOutputPanel.open",
-                "title": "Open SQL Output Panel",
-                "category": "PRQL"
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "eslint --max-warnings 0 . && tsc -p ./",
-        "watch": "tsc -w -p ./"
-    },
-    "dependencies": {
-        "@types/vscode": "^1.71.0",
-        "prql-js": "^0.2.6",
-        "shiki": "^0.11.1"
-    },
-    "devDependencies": {
-        "@types/node": "^18.7.6",
-        "@typescript-eslint/eslint-plugin": "^5.37.0",
-        "@typescript-eslint/parser": "^5.37.0",
-        "eslint": "^8.23.1",
-        "typescript": "^4.8.3"
-    },
-    "icon": "resources/prql-logo.png"
-
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "prql",
+        "scopeName": "source.prql",
+        "path": "./syntaxes/prql.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "prqlSqlOutputPanel.open",
+        "title": "Open SQL Output Panel",
+        "category": "PRQL"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "eslint --max-warnings 0 . && tsc -p ./",
+    "watch": "tsc -w -p ./"
+  },
+  "dependencies": {
+    "@types/vscode": "^1.71.0",
+    "prql-js": "^0.2.6",
+    "shiki": "^0.11.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.6",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
+    "@typescript-eslint/parser": "^5.37.0",
+    "eslint": "^8.23.1",
+    "typescript": "^4.8.3"
+  },
+  "icon": "resources/prql-logo.png"
 }
