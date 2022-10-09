@@ -1,11 +1,12 @@
-# PRQL Language support
+# PRQL extension for Visual Studio Code
 
-Provides syntax highlighting for PRQL, a modern language for transforming data.
+PRQL is a modern language for transforming data — a simple, powerful, pipelined SQL replacement.
 
-### 0.1.1
+The VSCode extension:
 
-Updated to latest PRQL specifications.
+- Provides syntax highlighting for PRQL
+- Offers a SQL Output Panel, which updates on every keypress
 
-### 0.1.0
+Here's an example:
 
-Initial syntax highlighting.
+![syntax_highlighting](resources/prql-example.png)
