@@ -9,4 +9,4 @@ The VSCode extension:
 
 Here's an example:
 
-![syntax_highlighting](resources/prql-example.png)
+![syntax_highlighting](/resources/prql-example.png)
