@@ -22,7 +22,7 @@ function updateLineDiagnostics(diagnosticCollection: vscode.DiagnosticCollection
       diagnosticCollection.set(editor.document.uri, []);
     } else {
       const range = getRange(result.error?.location);
-      const diagnostic = new vscode.Diagnostic(range, result.error?.message ?? "Syntax Error",
+      const diagnostic = new vscode.Diagnostic(range, result.error?.line ?? "Syntax Error",
         vscode.DiagnosticSeverity.Error);
       diagnosticCollection.set(editor.document.uri, [diagnostic]);
     }

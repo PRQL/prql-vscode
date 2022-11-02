@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.4.0]
+
+- Provide PRQL diagnostics
+
 ## [0.3.0]
 
 - Live transpiling from PRQL to SQL in a side panel
