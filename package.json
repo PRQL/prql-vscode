@@ -1,12 +1,12 @@
 {
-  "name": "prql",
+  "name": "prql-vscode",
   "displayName": "PRQL",
   "description": "PRQL is a modern language for transforming data — a simple, powerful, pipelined SQL replacement",
   "repository": {
-    "url": "https://github.com/prql/prql-code.git"
+    "url": "https://github.com/prql/prql-vscode.git"
   },
-  "publisher": "prql",
-  "version": "0.3.0",
+  "publisher": "prql-lang",
+  "version": "0.3.1",
   "engines": {
     "vscode": "^1.65.0"
   },
