@@ -2,6 +2,8 @@ on:
   push:
     tags:
       - "*"
+  # FIXME remove before merging
+  pull_request:
 
 name: Publish extension
 jobs:
