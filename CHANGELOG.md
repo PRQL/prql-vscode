@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3
+
+- Bump `prql-js` to 0.2.11
+
 ## 0.3.2
 
 - Provide PRQL diagnostics
