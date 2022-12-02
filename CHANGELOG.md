@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4
+
+- Bump `prql-js` to 0.3.0
+
 ## 0.3.3
 
 - Bump `prql-js` to 0.2.11
