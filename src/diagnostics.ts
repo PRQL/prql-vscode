@@ -33,7 +33,11 @@ export function activateDiagnostics(context: vscode.ExtensionContext) {
   const diagnosticCollection = vscode.languages.createDiagnosticCollection("prql");
   context.subscriptions.push(diagnosticCollection);
 
+  vscode.workspace.onDidCloseTextDocument((document: vscode.TextDocument) =>
+    diagnosticCollection.set(document.uri, []));
+
   [
+    vscode.workspace.onDidOpenTextDocument,
     vscode.workspace.onDidChangeTextDocument,
     vscode.window.onDidChangeActiveTextEditor
   ].forEach(event => {
