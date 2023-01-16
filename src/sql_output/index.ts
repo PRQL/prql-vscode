@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
-import { compile } from "prql-js";
 import * as shiki from "shiki";
 import { readFileSync } from "node:fs";
 import { CompilationResult, debounce, getResourceUri, normalizeThemeName } from "./utils";
 import { isPrqlDocument } from "../utils";
+import { compile } from "../compiler";
 
 function getCompiledTemplate(context: vscode.ExtensionContext, webview: vscode.Webview): string {
   const template = readFileSync(getResourceUri(context, "sql_output.html").fsPath, "utf-8");
@@ -43,18 +43,18 @@ async function compilePrql(text: string, lastOkHtml: string | undefined):
   Promise<CompilationResult> {
   const result = compile(text);
 
-  if (result.error) {
+  if (Array.isArray(result)) {
     return {
       status: "error",
       error: {
-        message: result.error.message,
+        message: result[0].display ?? result[0].reason,
       },
       last_html: lastOkHtml
     };
   }
 
   const highlighter = await getHighlighter();
-  const highlighted = highlighter.codeToHtml(result.sql ? result.sql : "", {
+  const highlighted = highlighter.codeToHtml(result, {
     lang: "sql"
   });
 
