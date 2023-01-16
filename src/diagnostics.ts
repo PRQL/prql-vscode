@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
-import { compile, SourceLocation } from "prql-js";
 import { isPrqlDocument } from "./utils";
+import { SourceLocation, compile } from "./compiler";
 
-function getRange(location: SourceLocation | undefined): vscode.Range {
+function getRange(location: SourceLocation | null): vscode.Range {
   if (location) {
-    return new vscode.Range(location.start_line, location.start_column, location.end_line,
-      location.end_column);
+    return new vscode.Range(location.start[0], location.start[1], location.end[0],
+      location.end[1]);
   }
 
   return new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0));
@@ -18,11 +18,11 @@ function updateLineDiagnostics(diagnosticCollection: vscode.DiagnosticCollection
     const text = editor.document.getText();
     const result = compile(text);
 
-    if (result.sql) {
+    if (!Array.isArray(result)) {
       diagnosticCollection.set(editor.document.uri, []);
     } else {
-      const range = getRange(result.error?.location);
-      const diagnostic = new vscode.Diagnostic(range, result.error?.line ?? "Syntax Error",
+      const range = getRange(result[0].location);
+      const diagnostic = new vscode.Diagnostic(range, result[0].reason ?? "Syntax Error",
         vscode.DiagnosticSeverity.Error);
       diagnosticCollection.set(editor.document.uri, [diagnostic]);
     }
