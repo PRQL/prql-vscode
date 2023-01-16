@@ -101,9 +101,14 @@ function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () =
 
   const disposables: vscode.Disposable[] = [];
 
-  disposables.push(vscode.workspace.onDidChangeTextDocument(debounce(() => {
-    sendText(panel);
-  }, 10)));
+  [
+    vscode.workspace.onDidOpenTextDocument,
+    vscode.workspace.onDidChangeTextDocument
+  ].forEach(event => {
+    disposables.push(event(debounce(() => {
+      sendText(panel);
+    }, 10)));
+  });
 
   let lastEditor: vscode.TextEditor | undefined = undefined;
   disposables.push(vscode.window.onDidChangeActiveTextEditor(editor => {
