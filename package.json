@@ -6,7 +6,7 @@
     "url": "https://github.com/prql/prql-vscode.git"
   },
   "publisher": "prql-lang",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "engines": {
     "vscode": "^1.65.0"
   },
@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "@types/vscode": "^1.71.0",
-    "prql-js": "^0.4.0",
+    "prql-js": "^0.4.2",
     "shiki": "^0.11.1"
   },
   "devDependencies": {
