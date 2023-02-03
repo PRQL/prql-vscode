@@ -48,9 +48,26 @@
       {
         "command": "prqlSqlOutputPanel.open",
         "title": "Open SQL Output Panel",
-        "category": "PRQL"
+        "category": "PRQL",
+        "icon": "$(database)"
       }
-    ]
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "prqlSqlOutputPanel.open",
+          "when": "resourceFilename =~ /.*(.prql)/",
+          "group": "navigation"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "prqlSqlOutputPanel.open",
+          "when": "resourceFilename =~ /.*\\.(prql)/",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
