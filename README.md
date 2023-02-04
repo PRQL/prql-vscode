@@ -5,8 +5,8 @@ PRQL is a modern language for transforming data — a simple, powerful, pipeline
 The VSCode extension:
 
 - Provides syntax highlighting and diagnostics for PRQL
-- Offers a SQL Output Panel, which updates on every keypress. Activate via
-  `Command Palette` -> `PRQL: Open SQL Output Panel`.
+- Offers generated SQL Preview Panel, which updates on every keypress. Activate via
+  `Command Palette` -> `PRQL: Open SQL Preview`.
 
 Here's an example:
 
@@ -17,7 +17,7 @@ Here's an example:
 - Clone the repository and install dependencies:
 
   ```sh
-  git clone git@github.com:prql/prql-vscode.git 
+  git clone git@github.com:prql/prql-vscode.git
   cd prql-vscode && npm install
   ```
 
