@@ -13,10 +13,6 @@
   "categories": [
     "Programming Languages"
   ],
-  "activationEvents": [
-    "onLanguage:prql",
-    "onCommand:prqlSqlOutputPanel.open"
-  ],
   "source": "src/extension.ts",
   "main": "out/extension.js",
   "contributes": {
