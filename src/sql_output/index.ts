@@ -85,7 +85,7 @@ function sendThemeChanged(panel: vscode.WebviewPanel) {
 }
 
 function createWebviewPanel(context: vscode.ExtensionContext, onDidDispose: () => any): vscode.WebviewPanel {
-  const panel = vscode.window.createWebviewPanel("prqlSqlOutputPanel", "PRQL - SQL Output",
+const panel = vscode.window.createWebviewPanel("prql.sqlPreviewPanel", "SQL Preview",
     {
       viewColumn: vscode.ViewColumn.Beside,
       preserveFocus: true
@@ -139,7 +139,7 @@ export function activateSqlOutputPanel(context: vscode.ExtensionContext) {
   let panel: vscode.WebviewPanel | undefined = undefined;
   let panelViewColumn: vscode.ViewColumn | undefined = undefined;
 
-  const command = vscode.commands.registerCommand("prqlSqlOutputPanel.open", () => {
+  const command = vscode.commands.registerCommand("prql.openSqlPreview", () => {
     if (panel) {
       panel.reveal(panelViewColumn, true);
     } else {

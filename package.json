@@ -42,23 +42,23 @@
     ],
     "commands": [
       {
-        "command": "prqlSqlOutputPanel.open",
-        "title": "Open SQL Output Panel",
+        "command": "prql.openSqlPreview",
+        "title": "Open SQL Preview",
         "category": "PRQL",
-        "icon": "$(database)"
+        "icon": "$(open-preview)"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "prqlSqlOutputPanel.open",
+          "command": "prql.openSqlPreview",
           "when": "resourceFilename =~ /.*(.prql)/",
           "group": "navigation"
         }
       ],
       "editor/title/context": [
         {
-          "command": "prqlSqlOutputPanel.open",
+          "command": "prql.openSqlPreview",
           "when": "resourceFilename =~ /.*\\.(prql)/",
           "group": "navigation"
         }
