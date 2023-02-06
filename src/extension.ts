@@ -1,8 +1,15 @@
-import * as vscode from "vscode";
-import { activateSqlOutputPanel } from "./sql_output";
-import { activateDiagnostics } from "./diagnostics";
+import { ExtensionContext } from 'vscode';
+import { activateSqlPreviewPanel } from './sql_output';
+import { activateDiagnostics } from './diagnostics';
 
-export function activate(context: vscode.ExtensionContext) {
+/**
+ * Activates PRQL extension,
+ * enables PRQL text document diagnostics,
+ * and registers Open SQL Preview command.
+ *
+ * @param context Extension context.
+ */
+export function activate(context: ExtensionContext) {
   activateDiagnostics(context);
-  activateSqlOutputPanel(context);
+  activateSqlPreviewPanel(context);
 }

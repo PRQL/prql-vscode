@@ -1,4 +1,4 @@
-import * as prqlJs from "prql-js";
+import * as prqlJs from 'prql-js';
 
 export function compile(prqlString: string): string | ErrorMessage[] {
   try {
@@ -36,7 +36,5 @@ export interface ErrorMessage {
 /// - column number within that line (0-based),
 export interface SourceLocation {
   start: [number, number];
-
   end: [number, number];
 }
-
