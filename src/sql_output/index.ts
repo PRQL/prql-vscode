@@ -23,6 +23,7 @@ import {
 
 import { isPrqlDocument } from '../utils';
 import { compile } from '../compiler';
+import * as constants from '../constants';
 
 function getCompiledTemplate(context: ExtensionContext, webview: Webview): string {
   const template = readFileSync(getResourceUri(context, 'sql_output.html').fsPath, 'utf-8');
@@ -76,7 +77,7 @@ async function compilePrql(text: string, lastOkHtml: string | undefined):
   const highlighted = highlighter.codeToHtml(result, { lang: 'sql' });
 
   return {
-    status: "ok",
+    status: 'ok',
     html: highlighted
   };
 }
@@ -103,7 +104,7 @@ function sendThemeChanged(panel: WebviewPanel) {
 
 function createWebviewPanel(context: ExtensionContext, onDidDispose: () => any): WebviewPanel {
 const panel = window.createWebviewPanel(
-    'prql.sqlPreviewPanel', 'SQL Preview',
+    constants.SqlPreviewPanel, constants.SqlPreviewTitle,
     {
       viewColumn: ViewColumn.Beside,
       preserveFocus: true
@@ -157,7 +158,7 @@ export function activateSqlPreviewPanel(context: ExtensionContext) {
   let panel: WebviewPanel | undefined = undefined;
   let panelViewColumn: ViewColumn | undefined = undefined;
 
-  const command = commands.registerCommand('prql.openSqlPreview', () => {
+  const command = commands.registerCommand(constants.OpenSqlPreview, () => {
     if (panel) {
       panel.reveal(panelViewColumn, true);
     } else {
