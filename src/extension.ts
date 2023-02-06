@@ -1,7 +1,7 @@
-import { ExtensionContext } from 'vscode';
-import { activateSqlPreviewPanel } from './sql_output';
-import { activateDiagnostics } from './diagnostics';
-import { registerCommands } from './commands';
+import { ExtensionContext } from "vscode";
+import { activateSqlPreviewPanel } from "./sql_output";
+import { activateDiagnostics } from "./diagnostics";
+import { registerCommands } from "./commands";
 
 /**
  * Activates PRQL extension,

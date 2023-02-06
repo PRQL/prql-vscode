@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src ##CSP_SOURCE##; style-src-attr 'unsafe-inline'; script-src ##CSP_SOURCE##;"
+    />
+    <link href="##CSS_URI##" rel="stylesheet" />
+    <script src="##JS_URI##" type="application/javascript"></script>
+    <title>PRQL SQL Output Panel</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src 'none'; style-src ##CSP_SOURCE##; style-src-attr 'unsafe-inline'; script-src ##CSP_SOURCE##;">
-  <link href="##CSS_URI##" rel="stylesheet">
-  <script src="##JS_URI##" type="application/javascript"></script>
-  <title>PRQL SQL Output Panel</title>
-</head>
+  <template id="status-ok">
+    <div></div>
+  </template>
 
-<template id="status-ok">
-  <div></div>
-</template>
-
-<template id="status-error">
-  <div class="error-inner">
-    <pre id="last-html"></pre>
-    <div id="error-container">
-      <h3>Syntax error!</h3>
-      <pre id="error-message"></pre>
+  <template id="status-error">
+    <div class="error-inner">
+      <pre id="last-html"></pre>
+      <div id="error-container">
+        <h3>Syntax error!</h3>
+        <pre id="error-message"></pre>
+      </div>
     </div>
-  </div>
-</template>
+  </template>
 
-<template id="status-theme-changed">
-  <span>Theme has changed. Waiting for a PRQL file...</span>
-</template>
+  <template id="status-theme-changed">
+    <span>Theme has changed. Waiting for a PRQL file...</span>
+  </template>
 
-<body>
-  <div id="result">Waiting for a PRQL file...</div>
-</body>
-
+  <body>
+    <div id="result">Waiting for a PRQL file...</div>
+  </body>
 </html>

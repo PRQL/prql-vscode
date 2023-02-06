@@ -8,45 +8,55 @@ import {
   Uri,
   commands,
   window,
-  workspace
-} from 'vscode';
+  workspace,
+} from "vscode";
 
-import * as shiki from 'shiki';
-import { readFileSync } from 'node:fs';
+import * as shiki from "shiki";
+import { readFileSync } from "node:fs";
 
 import {
   CompilationResult,
   debounce,
   getResourceUri,
-  normalizeThemeName
-} from './utils';
+  normalizeThemeName,
+} from "./utils";
 
-import { isPrqlDocument } from '../utils';
-import { compile } from '../compiler';
-import * as constants from '../constants';
+import { isPrqlDocument } from "../utils";
+import { compile } from "../compiler";
+import * as constants from "../constants";
 
-function getCompiledTemplate(context: ExtensionContext, webview: Webview): string {
-  const template = readFileSync(getResourceUri(context, 'sql_output.html').fsPath, 'utf-8');
-  const templateJS = getResourceUri(context, 'sql_output.js');
-  const templateCss = getResourceUri(context, 'sql_output.css');
+function getCompiledTemplate(
+  context: ExtensionContext,
+  webview: Webview
+): string {
+  const template = readFileSync(
+    getResourceUri(context, "sql_output.html").fsPath,
+    "utf-8"
+  );
+  const templateJS = getResourceUri(context, "sql_output.js");
+  const templateCss = getResourceUri(context, "sql_output.css");
 
   return (template as string)
     .replace(/##CSP_SOURCE##/g, webview.cspSource)
-    .replace('##JS_URI##', webview.asWebviewUri(templateJS).toString())
-    .replace('##CSS_URI##', webview.asWebviewUri(templateCss).toString())
+    .replace("##JS_URI##", webview.asWebviewUri(templateJS).toString())
+    .replace("##CSS_URI##", webview.asWebviewUri(templateCss).toString());
 }
 
 function getThemeName(): string {
-  const currentThemeName = workspace.getConfiguration('workbench')
-    .get<string>('colorTheme', 'dark-plus');
+  const currentThemeName = workspace
+    .getConfiguration("workbench")
+    .get<string>("colorTheme", "dark-plus");
 
-  for (const themeName of [currentThemeName, normalizeThemeName(currentThemeName)]) {
+  for (const themeName of [
+    currentThemeName,
+    normalizeThemeName(currentThemeName),
+  ]) {
     if (shiki.BUNDLED_THEMES.includes(themeName as shiki.Theme)) {
       return themeName;
     }
   }
 
-  return 'css-variables';
+  return "css-variables";
 }
 
 let highlighter: shiki.Highlighter | undefined;
@@ -56,29 +66,31 @@ async function getHighlighter(): Promise<shiki.Highlighter> {
     return Promise.resolve(highlighter);
   }
 
-  return highlighter = await shiki.getHighlighter({ theme: getThemeName() });
+  return (highlighter = await shiki.getHighlighter({ theme: getThemeName() }));
 }
 
-async function compilePrql(text: string, lastOkHtml: string | undefined):
-  Promise<CompilationResult> {
+async function compilePrql(
+  text: string,
+  lastOkHtml: string | undefined
+): Promise<CompilationResult> {
   const result = compile(text);
 
   if (Array.isArray(result)) {
     return {
-      status: 'error',
+      status: "error",
       error: {
         message: result[0].display ?? result[0].reason,
       },
-      last_html: lastOkHtml
+      last_html: lastOkHtml,
     };
   }
 
   const highlighter = await getHighlighter();
-  const highlighted = highlighter.codeToHtml(result, { lang: 'sql' });
+  const highlighted = highlighter.codeToHtml(result, { lang: "sql" });
 
   return {
-    status: 'ok',
-    html: highlighted
+    status: "ok",
+    html: highlighted,
   };
 }
 
@@ -89,65 +101,80 @@ function sendText(panel: WebviewPanel) {
 
   if (panel.visible && editor && isPrqlDocument(editor)) {
     const text = editor.document.getText();
-    compilePrql(text, lastOkHtml).then(result => {
-      if (result.status === 'ok') {
+    compilePrql(text, lastOkHtml).then((result) => {
+      if (result.status === "ok") {
         lastOkHtml = result.html;
       }
-      panel.webview.postMessage(result)
+      panel.webview.postMessage(result);
     });
   }
 }
 
 function sendThemeChanged(panel: WebviewPanel) {
-  panel.webview.postMessage({ status: 'theme-changed' });
+  panel.webview.postMessage({ status: "theme-changed" });
 }
 
-function createWebviewPanel(context: ExtensionContext, onDidDispose: () => any): WebviewPanel {
-const panel = window.createWebviewPanel(
-    constants.SqlPreviewPanel, constants.SqlPreviewTitle,
+function createWebviewPanel(
+  context: ExtensionContext,
+  onDidDispose: () => any
+): WebviewPanel {
+  const panel = window.createWebviewPanel(
+    constants.SqlPreviewPanel,
+    constants.SqlPreviewTitle,
     {
       viewColumn: ViewColumn.Beside,
-      preserveFocus: true
+      preserveFocus: true,
     },
     {
       enableFindWidget: false,
       enableScripts: true,
-      localResourceRoots: [Uri.joinPath(context.extensionUri, 'resources')]
+      localResourceRoots: [Uri.joinPath(context.extensionUri, "resources")],
     }
   );
   panel.webview.html = getCompiledTemplate(context, panel.webview);
-  panel.iconPath = getResourceUri(context, 'favicon.ico');
+  panel.iconPath = getResourceUri(context, "favicon.ico");
 
   const disposables: Disposable[] = [];
 
-  [
-    workspace.onDidOpenTextDocument,
-    workspace.onDidChangeTextDocument
-  ].forEach(event => {
-    disposables.push(event(debounce(() => {
-      sendText(panel);
-    }, 10)));
-  });
+  [workspace.onDidOpenTextDocument, workspace.onDidChangeTextDocument].forEach(
+    (event) => {
+      disposables.push(
+        event(
+          debounce(() => {
+            sendText(panel);
+          }, 10)
+        )
+      );
+    }
+  );
 
   let lastEditor: TextEditor | undefined = undefined;
-  disposables.push(window.onDidChangeActiveTextEditor(editor => {
-    if (editor && editor !== lastEditor) {
-      lastEditor = editor;
+  disposables.push(
+    window.onDidChangeActiveTextEditor((editor) => {
+      if (editor && editor !== lastEditor) {
+        lastEditor = editor;
+        lastOkHtml = undefined;
+        sendText(panel);
+      }
+    })
+  );
+
+  disposables.push(
+    window.onDidChangeActiveColorTheme(() => {
+      highlighter = undefined;
       lastOkHtml = undefined;
-      sendText(panel);
-    }
-  }));
+      sendThemeChanged(panel);
+    })
+  );
 
-  disposables.push(window.onDidChangeActiveColorTheme(() => {
-    highlighter = undefined;
-    lastOkHtml = undefined;
-    sendThemeChanged(panel);
-  }));
-
-  panel.onDidDispose(() => {
-    disposables.forEach(d => d.dispose());
-    onDidDispose();
-  }, undefined, context.subscriptions);
+  panel.onDidDispose(
+    () => {
+      disposables.forEach((d) => d.dispose());
+      onDidDispose();
+    },
+    undefined,
+    context.subscriptions
+  );
 
   sendText(panel);
 
@@ -162,7 +189,7 @@ export function activateSqlPreviewPanel(context: ExtensionContext) {
     if (panel) {
       panel.reveal(panelViewColumn, true);
     } else {
-      panel = createWebviewPanel(context, () => panel = undefined);
+      panel = createWebviewPanel(context, () => (panel = undefined));
       panelViewColumn = panel?.viewColumn;
     }
   });

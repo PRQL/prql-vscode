@@ -1,15 +1,20 @@
-window.addEventListener("message", event => {
+window.addEventListener("message", (event) => {
   const { status } = event.data;
-  const template = document.getElementById(`status-${status}`).content.cloneNode(true);
+  const template = document
+    .getElementById(`status-${status}`)
+    .content.cloneNode(true);
 
-  const el = name => template.getElementById(name);
+  const el = (name) => template.getElementById(name);
 
   switch (status) {
     case "ok":
       template.lastElementChild.innerHTML = event.data.html;
       break;
     case "error":
-      const { error: { message }, last_html: lastHtml } = event.data;
+      const {
+        error: { message },
+        last_html: lastHtml,
+      } = event.data;
 
       if (lastHtml) {
         el("last-html").innerHTML = lastHtml;
