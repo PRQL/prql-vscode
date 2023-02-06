@@ -1,5 +1,5 @@
-import * as vscode from "vscode";
+import { TextEditor } from 'vscode';
 
-export function isPrqlDocument(editor: vscode.TextEditor): boolean {
-  return editor.document.languageId === "prql";
+export function isPrqlDocument(editor: TextEditor): boolean {
+  return editor.document.languageId === 'prql';
 }

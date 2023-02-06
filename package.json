@@ -46,20 +46,36 @@
         "title": "Open SQL Preview",
         "category": "PRQL",
         "icon": "$(open-preview)"
+      },
+      {
+        "command": "prql.generateSqlFile",
+        "title": "Generate SQL File",
+        "category": "PRQL",
+        "icon": "$(database)"
       }
     ],
     "menus": {
       "editor/title": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /.*(.prql)/",
+          "when": "resourceFilename =~ /\\.prql$/",
+          "group": "navigation"
+        },
+        {
+          "command": "prql.generateSqlFile",
+          "when": "resourceFilename =~ /\\.prql$/",
           "group": "navigation"
         }
       ],
       "editor/title/context": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /.*\\.(prql)/",
+          "when": "resourceFilename =~ /\\.prql$/",
+          "group": "navigation"
+        },
+        {
+          "command": "prql.generateSqlFile",
+          "when": "resourceFilename =~ /\\.prql$/",
           "group": "navigation"
         }
       ]
