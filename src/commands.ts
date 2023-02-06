@@ -4,14 +4,14 @@ import {
   workspace,
   Disposable,
   ExtensionContext,
-  Uri
-} from 'vscode';
+  Uri,
+} from "vscode";
 
-import * as path from 'path';
-import * as constants from './constants';
+import * as path from "path";
+import * as constants from "./constants";
 
-import { compile } from './compiler';
-import { TextEncoder } from 'util';
+import { compile } from "./compiler";
+import { TextEncoder } from "util";
 
 /**
  * Registers PRQL extension commands.
@@ -30,17 +30,24 @@ export function registerCommands(context: ExtensionContext) {
  * @param callback Command handler.
  * @param thisArg The `this` context used when invoking command handler.
  */
-function registerCommand(context: ExtensionContext, commandId: string,
-  callback: (...args: any[]) => any, thisArg?: any): void {
-
-  const command: Disposable = commands.registerCommand(commandId, async (...args) => {
-    try {
-      await callback(...args);
-    } catch (e: unknown) {
-      window.showErrorMessage(String(e));
-      console.error(e);
-    }
-  }, thisArg);
+function registerCommand(
+  context: ExtensionContext,
+  commandId: string,
+  callback: (...args: any[]) => any,
+  thisArg?: any
+): void {
+  const command: Disposable = commands.registerCommand(
+    commandId,
+    async (...args) => {
+      try {
+        await callback(...args);
+      } catch (e: unknown) {
+        window.showErrorMessage(String(e));
+        console.error(e);
+      }
+    },
+    thisArg
+  );
 
   context.subscriptions.push(command);
 }
@@ -57,7 +64,7 @@ function registerCommand(context: ExtensionContext, commandId: string,
 async function generateSqlFile() {
   const editor = window.activeTextEditor;
 
-  if (editor && editor.document.languageId === 'prql') {
+  if (editor && editor.document.languageId === "prql") {
     // compile PRQL
     const prql = editor.document.getText();
     const result = compile(prql);
@@ -65,14 +72,16 @@ async function generateSqlFile() {
     if (Array.isArray(result)) {
       window.showErrorMessage(`PRQL Compile \
         ${result[0].display ?? result[0].reason}`);
-    }
-    else {
+    } else {
       // create sql file
       const prqlDocumentUri: Uri = editor.document.uri;
       const prqlFilePath = path.parse(prqlDocumentUri.fsPath);
-      const sqlFilePath = path.join(prqlFilePath.dir, `${prqlFilePath.name}.sql`);
+      const sqlFilePath = path.join(
+        prqlFilePath.dir,
+        `${prqlFilePath.name}.sql`
+      );
       const sqlFileUri: Uri = Uri.file(sqlFilePath);
-      const textEncoder: TextEncoder = new TextEncoder()
+      const textEncoder: TextEncoder = new TextEncoder();
       const sqlContent: Uint8Array = textEncoder.encode(result);
       await workspace.fs.writeFile(sqlFileUri, sqlContent);
 
