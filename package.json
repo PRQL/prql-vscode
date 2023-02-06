@@ -52,14 +52,14 @@
       "editor/title": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /.*(.prql)/",
+          "when": "resourceFilename =~ /\\.prql$/",
           "group": "navigation"
         }
       ],
       "editor/title/context": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /.*\\.(prql)/",
+          "when": "resourceFilename =~ /\\.prql$/",
           "group": "navigation"
         }
       ]
