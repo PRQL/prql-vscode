@@ -15,6 +15,11 @@
   ],
   "source": "src/extension.ts",
   "main": "out/extension.js",
+  "activationEvents": [
+    "onLanguage:prql",
+    "onCommand:prql.openSqlPreview",
+    "onCommand:prql.generateSqlFile"
+  ],
   "contributes": {
     "languages": [
       {
