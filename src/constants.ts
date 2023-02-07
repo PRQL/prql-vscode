@@ -17,3 +17,4 @@ export const SqlPreviewTitle = "SQL Preview";
 // PRQL extension command constants
 export const OpenSqlPreview = `${ExtensionId}.openSqlPreview`;
 export const GenerateSqlFile = `${ExtensionId}.generateSqlFile`;
+export const CopySqlToClipboard = `${ExtensionId}.copySqlToClipboard`;

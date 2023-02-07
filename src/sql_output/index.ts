@@ -91,12 +91,13 @@ async function compilePrql(
   return {
     status: "ok",
     html: highlighted,
+    sql: result
   };
 }
 
 let lastOkHtml: string | undefined;
 
-function sendText(panel: WebviewPanel) {
+function sendText(context: ExtensionContext, panel: WebviewPanel) {
   const editor = window.activeTextEditor;
 
   if (panel.visible && editor && isPrqlDocument(editor)) {
@@ -106,7 +107,17 @@ function sendText(panel: WebviewPanel) {
         lastOkHtml = result.html;
       }
       panel.webview.postMessage(result);
+
+      // set sql context value
+      commands.executeCommand('setContext', 'prql.sql', result.sql);
+      context.workspaceState.update('prql.sql', result.sql);
+
     });
+  }
+  else {
+    // clear sql context value
+    commands.executeCommand('setContext', 'prql.sql', undefined);
+    context.workspaceState.update('prql.sql', '');
   }
 }
 
@@ -141,7 +152,7 @@ function createWebviewPanel(
       disposables.push(
         event(
           debounce(() => {
-            sendText(panel);
+            sendText(context, panel);
           }, 10)
         )
       );
@@ -154,7 +165,7 @@ function createWebviewPanel(
       if (editor && editor !== lastEditor) {
         lastEditor = editor;
         lastOkHtml = undefined;
-        sendText(panel);
+        sendText(context, panel);
       }
     })
   );
@@ -176,7 +187,7 @@ function createWebviewPanel(
     context.subscriptions
   );
 
-  sendText(panel);
+  sendText(context, panel);
 
   return panel;
 }
