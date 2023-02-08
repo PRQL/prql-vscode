@@ -80,7 +80,7 @@
         },
         {
           "command": "prql.copySqlToClipboard",
-          "when": "prql.sqlPreivewActive",
+          "when": "prql.sqlPreviewActive",
           "group": "navigation"
         }
       ],

@@ -20,4 +20,4 @@ export const GenerateSqlFile = `${ExtensionId}.generateSqlFile`;
 export const CopySqlToClipboard = `${ExtensionId}.copySqlToClipboard`;
 
 // PRQL context keys
-export const SqlPreviewActive = `${ExtensionId}.sqlPreivewActive`;
+export const SqlPreviewActive = `${ExtensionId}.sqlPreviewActive`;
