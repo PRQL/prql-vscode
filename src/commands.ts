@@ -6,13 +6,13 @@ import {
   Disposable,
   ExtensionContext,
   Uri,
-} from "vscode";
+} from 'vscode';
 
-import * as path from "path";
-import * as constants from "./constants";
+import * as path from 'path';
+import * as constants from './constants';
 
-import { compile } from "./compiler";
-import { TextEncoder } from "util";
+import { compile } from './compiler';
+import { TextEncoder } from 'util';
 
 /**
  * Registers PRQL extension commands.
@@ -23,11 +23,11 @@ export function registerCommands(context: ExtensionContext) {
   registerCommand(context, constants.GenerateSqlFile, generateSqlFile);
 
   registerCommand(context, constants.CopySqlToClipboard, () => {
-    const sql: string | undefined = context.workspaceState.get("prql.sql");
+    const sql: string | undefined = context.workspaceState.get('prql.sql');
     if (sql) {
       // write the last generated sql code to vscode clipboard
       env.clipboard.writeText(sql);
-      window.showInformationMessage("PRQL: SQL copied to Clipboard.");
+      window.showInformationMessage('PRQL: SQL copied to Clipboard.');
     }
   });
 }
@@ -74,7 +74,7 @@ function registerCommand(
 async function generateSqlFile() {
   const editor = window.activeTextEditor;
 
-  if (editor && editor.document.languageId === "prql") {
+  if (editor && editor.document.languageId === 'prql') {
     // compile PRQL
     const prql = editor.document.getText();
     const result = compile(prql);

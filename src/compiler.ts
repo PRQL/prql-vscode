@@ -1,4 +1,4 @@
-import * as prqlJs from "prql-js";
+import * as prqlJs from 'prql-js';
 
 export function compile(prqlString: string): string | ErrorMessage[] {
   try {

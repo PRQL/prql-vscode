@@ -1,7 +1,7 @@
-import { ExtensionContext, Uri } from "vscode";
+import { ExtensionContext, Uri } from 'vscode';
 
 export interface CompilationResult {
-  status: "ok" | "error";
+  status: 'ok' | 'error';
   html?: string;
   sql?: string;
   error?: {
@@ -11,11 +11,11 @@ export interface CompilationResult {
 }
 
 export function getResourceUri(context: ExtensionContext, filename: string) {
-  return Uri.joinPath(context.extensionUri, "resources", filename);
+  return Uri.joinPath(context.extensionUri, 'resources', filename);
 }
 
 export function normalizeThemeName(currentTheme: string): string {
-  return currentTheme.toLowerCase().replace("theme", "").replace(/\s+/g, "-");
+  return currentTheme.toLowerCase().replace('theme', '').replace(/\s+/g, '-');
 }
 
 export function debounce(fn: () => any, timeout: number) {
