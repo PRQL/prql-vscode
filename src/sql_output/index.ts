@@ -9,43 +9,43 @@ import {
   commands,
   window,
   workspace,
-} from "vscode";
+} from 'vscode';
 
-import * as shiki from "shiki";
-import { readFileSync } from "node:fs";
+import * as shiki from 'shiki';
+import { readFileSync } from 'node:fs';
 
 import {
   CompilationResult,
   debounce,
   getResourceUri,
   normalizeThemeName,
-} from "./utils";
+} from './utils';
 
-import { isPrqlDocument } from "../utils";
-import { compile } from "../compiler";
-import * as constants from "../constants";
+import { isPrqlDocument } from '../utils';
+import { compile } from '../compiler';
+import * as constants from '../constants';
 
 function getCompiledTemplate(
   context: ExtensionContext,
   webview: Webview
 ): string {
   const template = readFileSync(
-    getResourceUri(context, "sql_output.html").fsPath,
-    "utf-8"
+    getResourceUri(context, 'sql_output.html').fsPath,
+    'utf-8'
   );
-  const templateJS = getResourceUri(context, "sql_output.js");
-  const templateCss = getResourceUri(context, "sql_output.css");
+  const templateJS = getResourceUri(context, 'sql_output.js');
+  const templateCss = getResourceUri(context, 'sql_output.css');
 
   return (template as string)
     .replace(/##CSP_SOURCE##/g, webview.cspSource)
-    .replace("##JS_URI##", webview.asWebviewUri(templateJS).toString())
-    .replace("##CSS_URI##", webview.asWebviewUri(templateCss).toString());
+    .replace('##JS_URI##', webview.asWebviewUri(templateJS).toString())
+    .replace('##CSS_URI##', webview.asWebviewUri(templateCss).toString());
 }
 
 function getThemeName(): string {
   const currentThemeName = workspace
-    .getConfiguration("workbench")
-    .get<string>("colorTheme", "dark-plus");
+    .getConfiguration('workbench')
+    .get<string>('colorTheme', 'dark-plus');
 
   for (const themeName of [
     currentThemeName,
@@ -56,7 +56,7 @@ function getThemeName(): string {
     }
   }
 
-  return "css-variables";
+  return 'css-variables';
 }
 
 let highlighter: shiki.Highlighter | undefined;
@@ -77,27 +77,27 @@ async function compilePrql(
 
   if (Array.isArray(result)) {
     return {
-      status: "error",
+      status: 'error',
       error: {
         message: result[0].display ?? result[0].reason,
       },
-      last_html: lastOkHtml,
+      lastHtml: lastOkHtml,
     };
   }
 
   const highlighter = await getHighlighter();
-  const highlighted = highlighter.codeToHtml(result, { lang: "sql" });
+  const highlighted = highlighter.codeToHtml(result, { lang: 'sql' });
 
   return {
-    status: "ok",
+    status: 'ok',
     html: highlighted,
     sql: result,
   };
 }
 
 function clearSqlContext(context: ExtensionContext) {
-  commands.executeCommand("setContext", constants.SqlPreviewActive, false);
-  context.workspaceState.update("prql.sql", undefined);
+  commands.executeCommand('setContext', constants.SqlPreviewActive, false);
+  context.workspaceState.update('prql.sql', undefined);
 }
 
 let lastOkHtml: string | undefined;
@@ -108,14 +108,14 @@ function sendText(context: ExtensionContext, panel: WebviewPanel) {
   if (panel.visible && editor && isPrqlDocument(editor)) {
     const text = editor.document.getText();
     compilePrql(text, lastOkHtml).then((result) => {
-      if (result.status === "ok") {
+      if (result.status === 'ok') {
         lastOkHtml = result.html;
       }
       panel.webview.postMessage(result);
 
       // set sql preview flag and update sql output
-      commands.executeCommand("setContext", constants.SqlPreviewActive, true);
-      context.workspaceState.update("prql.sql", result.sql);
+      commands.executeCommand('setContext', constants.SqlPreviewActive, true);
+      context.workspaceState.update('prql.sql', result.sql);
     });
   }
 
@@ -125,7 +125,7 @@ function sendText(context: ExtensionContext, panel: WebviewPanel) {
 }
 
 function sendThemeChanged(panel: WebviewPanel) {
-  panel.webview.postMessage({ status: "theme-changed" });
+  panel.webview.postMessage({ status: 'theme-changed' });
 }
 
 function createWebviewPanel(
@@ -142,11 +142,11 @@ function createWebviewPanel(
     {
       enableFindWidget: false,
       enableScripts: true,
-      localResourceRoots: [Uri.joinPath(context.extensionUri, "resources")],
+      localResourceRoots: [Uri.joinPath(context.extensionUri, 'resources')],
     }
   );
   panel.webview.html = getCompiledTemplate(context, panel.webview);
-  panel.iconPath = getResourceUri(context, "favicon.ico");
+  panel.iconPath = getResourceUri(context, 'favicon.ico');
 
   const disposables: Disposable[] = [];
 

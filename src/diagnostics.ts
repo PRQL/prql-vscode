@@ -9,10 +9,10 @@ import {
   languages,
   window,
   workspace,
-} from "vscode";
+} from 'vscode';
 
-import { isPrqlDocument } from "./utils";
-import { SourceLocation, compile } from "./compiler";
+import { isPrqlDocument } from './utils';
+import { SourceLocation, compile } from './compiler';
 
 function getRange(location: SourceLocation | null): Range {
   if (location) {
@@ -40,7 +40,7 @@ function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
       const range = getRange(result[0].location);
       const diagnostic = new Diagnostic(
         range,
-        result[0].reason ?? "Syntax Error",
+        result[0].reason ?? 'Syntax Error',
         DiagnosticSeverity.Error
       );
       diagnosticCollection.set(editor.document.uri, [diagnostic]);
@@ -49,7 +49,7 @@ function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
 }
 
 export function activateDiagnostics(context: ExtensionContext) {
-  const diagnosticCollection = languages.createDiagnosticCollection("prql");
+  const diagnosticCollection = languages.createDiagnosticCollection('prql');
   context.subscriptions.push(diagnosticCollection);
 
   workspace.onDidCloseTextDocument((document: TextDocument) =>

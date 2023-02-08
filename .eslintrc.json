@@ -1,12 +1,40 @@
 {
   "root": true,
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "parser": "@typescript-eslint/parser",
-  "parserOptions": { "project": ["./tsconfig.json"] },
-  "plugins": ["@typescript-eslint"],
-  "ignorePatterns": ["out", "resources"],
+  "parserOptions": {
+    "project": [
+      "./tsconfig.json"
+    ]
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "ignorePatterns": [
+    "out",
+    "resources"
+  ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
-    "eol-last": ["error", "always"]
+    "eol-last": [
+      "error",
+      "always"
+    ],
+    "@typescript-eslint/quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": true
+      }
+    ],
+    "@typescript-eslint/naming-convention": "warn",
+    "@typescript-eslint/semi": "warn",
+    "curly": "warn",
+    "eqeqeq": "warn",
+    "no-throw-literal": "warn"
   }
 }
