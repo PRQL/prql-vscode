@@ -91,13 +91,13 @@ async function compilePrql(
   return {
     status: "ok",
     html: highlighted,
-    sql: result
+    sql: result,
   };
 }
 
 function clearSqlContext(context: ExtensionContext) {
-  commands.executeCommand('setContext', constants.SqlPreviewActive, false);
-  context.workspaceState.update('prql.sql', undefined);
+  commands.executeCommand("setContext", constants.SqlPreviewActive, false);
+  context.workspaceState.update("prql.sql", undefined);
 }
 
 let lastOkHtml: string | undefined;
@@ -113,9 +113,9 @@ function sendText(context: ExtensionContext, panel: WebviewPanel) {
       }
       panel.webview.postMessage(result);
 
-      // set sql preview flag and update sql ouput
-      commands.executeCommand('setContext', constants.SqlPreviewActive, true);
-      context.workspaceState.update('prql.sql', result.sql);
+      // set sql preview flag and update sql output
+      commands.executeCommand("setContext", constants.SqlPreviewActive, true);
+      context.workspaceState.update("prql.sql", result.sql);
     });
   }
 
