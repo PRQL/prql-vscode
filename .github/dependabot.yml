@@ -1,15 +1,15 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
       interval: daily
     commit-message:
-      prefix: "chore: "
+      prefix: 'chore: '
 
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: '/'
     schedule:
       interval: daily
     commit-message:
-      prefix: "chore: "
+      prefix: 'chore: '

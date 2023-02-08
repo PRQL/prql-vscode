@@ -73,7 +73,6 @@ async function compilePrql(
   text: string,
   lastOkHtml: string | undefined
 ): Promise<CompilationResult> {
-
   const result = compile(text);
 
   if (Array.isArray(result)) {

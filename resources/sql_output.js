@@ -1,4 +1,4 @@
-window.addEventListener("message", (event) => {
+window.addEventListener('message', (event) => {
   const { status } = event.data;
   const template = document
     .getElementById(`status-${status}`)
@@ -7,31 +7,31 @@ window.addEventListener("message", (event) => {
   const el = (name) => template.getElementById(name);
 
   switch (status) {
-    case "ok":
+    case 'ok':
       template.lastElementChild.innerHTML = event.data.html;
       break;
-    case "error":
+    case 'error':
       const {
         error: { message },
         last_html: lastHtml,
       } = event.data;
 
       if (lastHtml) {
-        el("last-html").innerHTML = lastHtml;
-        el("error-container").classList.add("error-container-fixed");
+        el('last-html').innerHTML = lastHtml;
+        el('error-container').classList.add('error-container-fixed');
       }
 
       if (message.length > 0) {
-        el("error-message").innerHTML = message;
-        el("error-container").style.display = "block";
+        el('error-message').innerHTML = message;
+        el('error-container').style.display = 'block';
       }
       break;
-    case "theme-changed":
+    case 'theme-changed':
       // Content already in the template
       break;
     default:
-      throw new Error("unknown message");
+      throw new Error('unknown message');
   }
 
-  document.getElementById("result").replaceChildren(template);
+  document.getElementById('result').replaceChildren(template);
 });
