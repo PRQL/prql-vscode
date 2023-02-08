@@ -1,12 +1,13 @@
 # PRQL extension for Visual Studio Code
 
-PRQL is a modern language for transforming data — a simple, powerful, pipelined SQL replacement.
+PRQL is a modern language for transforming data — a simple, powerful, pipelined
+SQL replacement.
 
 The VSCode extension:
 
 - Provides syntax highlighting and diagnostics for PRQL
-- Offers generated SQL Preview Panel, which updates on every keypress. Activate via
-  `Command Palette` -> `PRQL: Open SQL Preview`.
+- Offers generated SQL Preview Panel, which updates on every keypress. Activate
+  via `Command Palette` -> `PRQL: Open SQL Preview`.
 
 Here's an example:
 
@@ -29,7 +30,9 @@ Here's an example:
   npm run watch
   ```
 
-- Launch the extension in the Run and Debug panel. If you need to develop against a local version of `prql-js`, use `npm link` and restart the compilation task:
+- Launch the extension in the Run and Debug panel. If you need to develop
+  against a local version of `prql-js`, use `npm link` and restart the
+  compilation task:
 
   ```sh
   npm link ../prql/prql-js
