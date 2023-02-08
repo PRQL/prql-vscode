@@ -95,6 +95,11 @@ async function compilePrql(
   };
 }
 
+function clearSqlContext(context: ExtensionContext) {
+  commands.executeCommand('setContext', constants.SqlPreviewActive, false);
+  context.workspaceState.update('prql.sql', undefined);
+}
+
 let lastOkHtml: string | undefined;
 
 function sendText(context: ExtensionContext, panel: WebviewPanel) {
@@ -108,16 +113,14 @@ function sendText(context: ExtensionContext, panel: WebviewPanel) {
       }
       panel.webview.postMessage(result);
 
-      // set sql context value
-      commands.executeCommand('setContext', 'prql.sql', result.sql);
+      // set sql preview flag and update sql ouput
+      commands.executeCommand('setContext', constants.SqlPreviewActive, true);
       context.workspaceState.update('prql.sql', result.sql);
-
     });
   }
-  else {
-    // clear sql context value
-    commands.executeCommand('setContext', 'prql.sql', undefined);
-    context.workspaceState.update('prql.sql', '');
+
+  if (!panel.visible || !panel.active) {
+    clearSqlContext(context);
   }
 }
 
@@ -165,6 +168,7 @@ function createWebviewPanel(
       if (editor && editor !== lastEditor) {
         lastEditor = editor;
         lastOkHtml = undefined;
+        clearSqlContext(context);
         sendText(context, panel);
       }
     })
@@ -180,6 +184,7 @@ function createWebviewPanel(
 
   panel.onDidDispose(
     () => {
+      clearSqlContext(context);
       disposables.forEach((d) => d.dispose());
       onDidDispose();
     },

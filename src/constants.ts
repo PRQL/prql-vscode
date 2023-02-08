@@ -18,3 +18,6 @@ export const SqlPreviewTitle = "SQL Preview";
 export const OpenSqlPreview = `${ExtensionId}.openSqlPreview`;
 export const GenerateSqlFile = `${ExtensionId}.generateSqlFile`;
 export const CopySqlToClipboard = `${ExtensionId}.copySqlToClipboard`;
+
+// PRQL context keys
+export const SqlPreviewActive = `${ExtensionId}.sqlPreivewActive`;
