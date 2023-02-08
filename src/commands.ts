@@ -23,11 +23,11 @@ export function registerCommands(context: ExtensionContext) {
   registerCommand(context, constants.GenerateSqlFile, generateSqlFile);
 
   registerCommand(context, constants.CopySqlToClipboard, () => {
-    const sql: string | undefined = context.workspaceState.get('prql.sql');
+    const sql: string | undefined = context.workspaceState.get("prql.sql");
     if (sql) {
       // write the last generated sql code to vscode clipboard
       env.clipboard.writeText(sql);
-      window.showInformationMessage('PRQL: SQL copied to Clipboard.');
+      window.showInformationMessage("PRQL: SQL copied to Clipboard.");
     }
   });
 }
