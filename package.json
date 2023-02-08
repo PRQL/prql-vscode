@@ -18,7 +18,8 @@
   "activationEvents": [
     "onLanguage:prql",
     "onCommand:prql.openSqlPreview",
-    "onCommand:prql.generateSqlFile"
+    "onCommand:prql.generateSqlFile",
+    "onCommand:prql.copySqlToClipboard"
   ],
   "contributes": {
     "languages": [
@@ -57,6 +58,12 @@
         "title": "Generate SQL File",
         "category": "PRQL",
         "icon": "$(database)"
+      },
+      {
+        "command": "prql.copySqlToClipboard",
+        "title": "Copy SQL to Clipboard",
+        "category": "PRQL",
+        "icon": "$(copy)"
       }
     ],
     "menus": {
@@ -69,6 +76,11 @@
         {
           "command": "prql.generateSqlFile",
           "when": "resourceFilename =~ /\\.prql$/",
+          "group": "navigation"
+        },
+        {
+          "command": "prql.copySqlToClipboard",
+          "when": "prql.sqlPreviewActive",
           "group": "navigation"
         }
       ],

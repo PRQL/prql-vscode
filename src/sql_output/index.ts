@@ -91,12 +91,18 @@ async function compilePrql(
   return {
     status: "ok",
     html: highlighted,
+    sql: result,
   };
+}
+
+function clearSqlContext(context: ExtensionContext) {
+  commands.executeCommand("setContext", constants.SqlPreviewActive, false);
+  context.workspaceState.update("prql.sql", undefined);
 }
 
 let lastOkHtml: string | undefined;
 
-function sendText(panel: WebviewPanel) {
+function sendText(context: ExtensionContext, panel: WebviewPanel) {
   const editor = window.activeTextEditor;
 
   if (panel.visible && editor && isPrqlDocument(editor)) {
@@ -106,7 +112,15 @@ function sendText(panel: WebviewPanel) {
         lastOkHtml = result.html;
       }
       panel.webview.postMessage(result);
+
+      // set sql preview flag and update sql output
+      commands.executeCommand("setContext", constants.SqlPreviewActive, true);
+      context.workspaceState.update("prql.sql", result.sql);
     });
+  }
+
+  if (!panel.visible || !panel.active) {
+    clearSqlContext(context);
   }
 }
 
@@ -141,7 +155,7 @@ function createWebviewPanel(
       disposables.push(
         event(
           debounce(() => {
-            sendText(panel);
+            sendText(context, panel);
           }, 10)
         )
       );
@@ -154,7 +168,8 @@ function createWebviewPanel(
       if (editor && editor !== lastEditor) {
         lastEditor = editor;
         lastOkHtml = undefined;
-        sendText(panel);
+        clearSqlContext(context);
+        sendText(context, panel);
       }
     })
   );
@@ -169,6 +184,7 @@ function createWebviewPanel(
 
   panel.onDidDispose(
     () => {
+      clearSqlContext(context);
       disposables.forEach((d) => d.dispose());
       onDidDispose();
     },
@@ -176,7 +192,7 @@ function createWebviewPanel(
     context.subscriptions
   );
 
-  sendText(panel);
+  sendText(context, panel);
 
   return panel;
 }

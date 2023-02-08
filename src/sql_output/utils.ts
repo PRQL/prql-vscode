@@ -3,6 +3,7 @@ import { ExtensionContext, Uri } from "vscode";
 export interface CompilationResult {
   status: "ok" | "error";
   html?: string;
+  sql?: string;
   error?: {
     message: string;
   };
