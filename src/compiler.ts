@@ -5,7 +5,7 @@ export function compile(prqlString: string): string | ErrorMessage[] {
   const target = <string>workspace.getConfiguration('prql').get('target');
   const options: CompileOptions = { target: target };
   try {
-    // map new compile options to the old prql JS SQL optioins for now
+    // map new compile options to the old prql JS SQL options for now
     const compileOptions = new prql.SQLCompileOptions();
     compileOptions.dialect = targetToDialect(options.target);
     return prql.compile(prqlString, compileOptions) as string;
@@ -51,7 +51,7 @@ export interface SourceLocation {
 
 /**
  * Temp. target to dialect conversion function till we update prql-js.
- * @param target Commpilation target string.
+ * @param target Compilation target string.
  */
 function targetToDialect(target: string | undefined) {
   switch (target) {
