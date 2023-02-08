@@ -81,7 +81,7 @@ async function compilePrql(
       error: {
         message: result[0].display ?? result[0].reason,
       },
-      last_html: lastOkHtml,
+      lastHtml: lastOkHtml,
     };
   }
 

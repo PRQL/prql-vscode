@@ -7,7 +7,7 @@ export interface CompilationResult {
   error?: {
     message: string;
   };
-  last_html?: string | undefined;
+  lastHtml?: string | undefined;
 }
 
 export function getResourceUri(context: ExtensionContext, filename: string) {
