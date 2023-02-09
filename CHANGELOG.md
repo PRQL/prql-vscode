@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0
+
+- Use PRQL logo icon for `.prql` file extensions and display in file explorer and editor title bar ([#39](https://github.com/PRQL/prql-vscode/issues/39))
+- Add PRQL to SQL context menus to PRQL editor title ([#41](https://github.com/PRQL/prql-vscode/issues/41))
+- Add Generate SQL File command ([#42](https://github.com/PRQL/prql-vscode/issues/42))
+- Rename PRQL - SQL Output panel to SQL Preview ([#46](https://github.com/PRQL/prql-vscode/issues/46))
+- Add prql.target setting and use it to compile PRQL to SQL ([#48](https://github.com/PRQL/prql-vscode/issues/48))
+- Provide Copy to Clipboard feature in Sql Preview ([#55](https://github.com/PRQL/prql-vscode/issues/55))
+- Update prql-js to v0.5.0 and use new CompileOptions for the target ([#65](https://github.com/PRQL/prql-vscode/issues/65))
+
 ## 0.4.2
 
 - Update [`prql-js`](https://github.com/PRQL/prql/tree/main/prql-js) compiler to version [0.4.2](https://github.com/PRQL/prql/releases/tag/0.4.2)
