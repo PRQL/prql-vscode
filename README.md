@@ -11,7 +11,7 @@ The VSCode extension:
 
 Here's an example:
 
-![syntax_highlighting](/resources/prql-example.png)
+![PRQL Syntax Highlighting](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-example.png?raw=true)
 
 ## Developing
 
