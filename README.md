@@ -1,7 +1,7 @@
 # PRQL extension for Visual Studio Code
 
-PRQL is a modern language for transforming data — a
-simple, powerful, pipelined SQL replacement.
+PRQL is a modern language for transforming data — a simple, powerful, pipelined
+SQL replacement.
 
 This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
 
@@ -9,7 +9,8 @@ This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
 
 # Features
 
-- [PRQL](https://prql-lang.org/) language support, intellisense and syntax highlighting
+- [PRQL](https://prql-lang.org/) language support, intellisense and syntax
+  highlighting
 - SQL Preview with diagnostics updated on every keystroke as you type PRQL
 - Copy SQL from Preview to clipboard and use it in new SQL documents
 - Generate SQL file shortcut menu
@@ -19,7 +20,9 @@ This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
 
 # Configuration
 
-Modify [User or Workspace Settings](https://code.visualstudio.com/docs/getstarted/settings#_creating-user-and-workspace-settings) in vscode to change the default PRQL compiler target setting.
+Modify
+[User or Workspace Settings](https://code.visualstudio.com/docs/getstarted/settings#_creating-user-and-workspace-settings)
+in vscode to change the default PRQL compiler target setting.
 
 ![PRQL Extension Settings](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-settings.png?raw=true)
 
