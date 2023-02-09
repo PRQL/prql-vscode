@@ -16,6 +16,8 @@
   ([#55](https://github.com/PRQL/prql-vscode/issues/55))
 - Update prql-js to v0.5.0 and use new CompileOptions for the target
   ([#65](https://github.com/PRQL/prql-vscode/issues/65))
+- Add PRQL extension to Data Science and Fromatters categories
+  ([#70](https://github.com/PRQL/prql-vscode/issues/70))
 
 ## 0.4.2
 
