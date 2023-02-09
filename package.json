@@ -11,7 +11,13 @@
     "vscode": "^1.65.0"
   },
   "categories": [
+    "Data Science",
+    "Formatters",
     "Programming Languages"
+  ],
+  "keywords": [
+    "data tools",
+    "sql tools"
   ],
   "source": "src/extension.ts",
   "main": "out/extension.js",
