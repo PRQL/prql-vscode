@@ -1,7 +1,6 @@
 # PRQL extension for Visual Studio Code
 
-PRQL is a modern language for transforming data — a simple, powerful, pipelined
-SQL replacement.
+[PRQL](https://prql-lang.org/) is a modern language for transforming data — a simple, powerful, pipelined SQL replacement.
 
 The VSCode extension:
 
@@ -11,7 +10,7 @@ The VSCode extension:
 
 Here's an example:
 
-![PRQL Syntax Highlighting](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-example.png?raw=true)
+![PRQL Syntax Highlighting](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-vscode.png?raw=true)
 
 ## Developing
 
