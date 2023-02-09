@@ -2,12 +2,11 @@ import { workspace } from 'vscode';
 import * as prql from 'prql-js';
 
 export function compile(prqlString: string): string | ErrorMessage[] {
+  // create compile options from prql workspace settings
+  const compileOptions = new prql.CompileOptions();
   const target = <string>workspace.getConfiguration('prql').get('target');
-  const options: CompileOptions = { target: target };
+  compileOptions.target = `sql.${target.toLowerCase()}`;
   try {
-    // map new compile options to the old prql JS SQL options for now
-    const compileOptions = new prql.SQLCompileOptions();
-    compileOptions.dialect = targetToDialect(options.target);
     return prql.compile(prqlString, compileOptions) as string;
   } catch (error) {
     if ((error as any)?.message) {
@@ -20,10 +19,6 @@ export function compile(prqlString: string): string | ErrorMessage[] {
     }
     throw error;
   }
-}
-
-export interface CompileOptions {
-  target?: string;
 }
 
 export interface ErrorMessage {
@@ -47,35 +42,4 @@ export interface ErrorMessage {
 export interface SourceLocation {
   start: [number, number];
   end: [number, number];
-}
-
-/**
- * Temp. target to dialect conversion function till we update prql-js.
- * @param target Compilation target string.
- */
-function targetToDialect(target: string | undefined) {
-  switch (target) {
-    case 'BigQuery':
-      return prql.Dialect.BigQuery;
-    case 'ClickHouse':
-      return prql.Dialect.ClickHouse;
-    case 'DuckDb':
-      return prql.Dialect.DuckDb;
-    case 'Generic':
-      return prql.Dialect.Generic;
-    case 'Hive':
-      return prql.Dialect.Hive;
-    case 'MsSql':
-      return prql.Dialect.MsSql;
-    case 'MySql':
-      return prql.Dialect.MySql;
-    case 'PostgreSql':
-      return prql.Dialect.PostgreSql;
-    case 'SQLite':
-      return prql.Dialect.SQLite;
-    case 'Snowflake':
-      return prql.Dialect.Snowflake;
-    default:
-      return prql.Dialect.Ansi;
-  }
 }
