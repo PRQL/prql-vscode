@@ -112,7 +112,7 @@
             "Hive",
             "MsSql",
             "MySql",
-            "PostgreSql",
+            "Postgres",
             "SQLite",
             "Snowflake"
           ],
