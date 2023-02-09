@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.4.2
+
+- Update [`prql-js`](https://github.com/PRQL/prql/tree/main/prql-js) compiler to version [0.4.2](https://github.com/PRQL/prql/releases/tag/0.4.2)
+
 ## 0.4.0
 
-* Upgrade the underlying compiler to [PRQL v0.4.0](https://github.com/PRQL/prql/releases/tag/0.4.0)
+* Upgrade the underlying compiler to [PRQL 0.4.0](https://github.com/PRQL/prql/releases/tag/0.4.0)
 * Detect PRQL based on language ID rather than file extension by [@jiripospisil](https://github.com/jiripospisil) ([#25](https://github.com/PRQL/prql-vscode/pull/25))
 * Upgrade prql-js to 0.4.0 by [@aljazerzen](https://github.com/aljazerzen) ([#29](https://github.com/PRQL/prql-vscode/pull/29))
 * Release on releases rather than tags by [@max-sixty](https://github.com/max-sixty) ([#23](https://github.com/PRQL/prql-vscode/pull/23))
