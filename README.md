@@ -1,5 +1,11 @@
 # PRQL extension for Visual Studio Code
 
+[![Apache-2.0 License](https://img.shields.io/badge/license-Apache2-brightgreen.svg)](http://opensource.org/licenses/Apache-2.0)
+[![Version](https://vsmarketplacebadges.dev/version-short/PRQL-lang.prql-vscode.svg?color=orange)](https://marketplace.visualstudio.com/items?itemName=PRQL-lang.prql-vscode)
+[![Installs](https://vsmarketplacebadges.dev/installs-short/PRQL-lang.prql-vscode.svg?color=orange)](https://marketplace.visualstudio.com/items?itemName=PRQL-lang.prql-vscode)
+[![Downloads](https://vsmarketplacebadges.dev/downloads-short/PRQL-lang.prql-vscode.svg?color=orange)](https://marketplace.visualstudio.com/items?itemName=PRQL-lang.prql-vscode)
+[![Rating](https://vsmarketplacebadges.dev/rating-short/PRQL-lang.prql-vscode.svg?color=orange)](https://marketplace.visualstudio.com/items?itemName=PRQL-lang.prql-vscode)
+
 PRQL is a modern language for transforming data — a simple, powerful, pipelined
 SQL replacement.
 
