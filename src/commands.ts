@@ -21,6 +21,7 @@ import { TextEncoder } from 'util';
  */
 export function registerCommands(context: ExtensionContext) {
   registerCommand(context, constants.GenerateSqlFile, generateSqlFile);
+  registerCommand(context, constants.ViewSettings, viewPrqlSettings);
 
   registerCommand(context, constants.CopySqlToClipboard, () => {
     const sql: string | undefined = context.workspaceState.get('prql.sql');
@@ -60,6 +61,16 @@ function registerCommand(
   );
 
   context.subscriptions.push(command);
+}
+
+/**
+ * Opens vscode Settings panel with PRQL settings.
+ */
+async function viewPrqlSettings() {
+  await commands.executeCommand(
+    constants.WorkbenchActionOpenSettings,
+    constants.ExtensionId
+  );
 }
 
 /**
