@@ -68,7 +68,9 @@ function registerCommand(
  */
 async function viewPrqlSettings() {
   await commands.executeCommand(
-    constants.WorkbenchActionOpenSettings, constants.ExtensionId);
+    constants.WorkbenchActionOpenSettings,
+    constants.ExtensionId
+  );
 }
 
 /**
