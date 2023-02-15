@@ -31,6 +31,10 @@ in vscode to change the default PRQL compiler target setting.
 
 ![PRQL Extension Settings](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-settings.png?raw=true)
 
+Use new PRQL Settings menu in PRQL Editor to access compiler settings:
+
+![View PRQL Settings](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-settings.gif?raw=true)
+
 ## Developing
 
 - Clone the repository and install dependencies:
