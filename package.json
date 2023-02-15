@@ -136,6 +136,11 @@
           ],
           "default": "Ansi",
           "description": "PRQL compiler target dialect to use by default when generating SQL from pipeline definition files."
+        },
+        "prql.addCompilerSignatureComment": {
+          "type": "boolean",
+          "default": true,
+          "description": "Add PRQL compiler signature comment with SQL target dialect and compiler version to generated SQL."
         }
       }
     }
