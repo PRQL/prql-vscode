@@ -1,11 +1,18 @@
 import { workspace } from 'vscode';
 import * as prql from 'prql-js';
+import * as constants from './constants';
 
 export function compile(prqlString: string): string | ErrorMessage[] {
   // create compile options from prql workspace settings
   const compileOptions = new prql.CompileOptions();
   const target = <string>workspace.getConfiguration('prql').get('target');
+  const addCompilerInfo: boolean = <boolean>(
+    workspace
+      .getConfiguration('prql')
+      .get(constants.AddCompilerSignatureComment)
+  );
   compileOptions.target = `sql.${target.toLowerCase()}`;
+  compileOptions.signature_comment = addCompilerInfo;
   try {
     return prql.compile(prqlString, compileOptions) as string;
   } catch (error) {

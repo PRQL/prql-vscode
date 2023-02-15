@@ -20,6 +20,9 @@ export const GenerateSqlFile = `${ExtensionId}.generateSqlFile`;
 export const CopySqlToClipboard = `${ExtensionId}.copySqlToClipboard`;
 export const ViewSettings = `${ExtensionId}.viewSettings`;
 
+// PRQL extension setting keys
+export const AddCompilerSignatureComment = `addCompilerSignatureComment`;
+
 // PRQL context keys
 export const SqlPreviewActive = `${ExtensionId}.sqlPreviewActive`;
 
