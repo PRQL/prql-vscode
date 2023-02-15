@@ -7,7 +7,7 @@ export function compile(prqlString: string): string | ErrorMessage[] {
   const compileOptions = new prql.CompileOptions();
   const target = <string>workspace.getConfiguration('prql').get('target');
   const addCompilerInfo: boolean = <boolean>workspace.getConfiguration('prql')
-    .get(constants.AddCompilerSignatureComment);
+      .get(constants.AddCompilerSignatureComment);
   compileOptions.target = `sql.${target.toLowerCase()}`;
   compileOptions.signature_comment = addCompilerInfo;
   try {
