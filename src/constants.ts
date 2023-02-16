@@ -21,7 +21,8 @@ export const CopySqlToClipboard = `${ExtensionId}.copySqlToClipboard`;
 export const ViewSettings = `${ExtensionId}.viewSettings`;
 
 // PRQL extension setting keys
-export const AddCompilerSignatureComment = `addCompilerSignatureComment`;
+export const AddCompilerSignatureComment = 'addCompilerSignatureComment';
+export const AddTargetDialectToSqlFilenames = 'addTargetDialectToSqlFilenames';
 
 // PRQL context keys
 export const SqlPreviewActive = `${ExtensionId}.sqlPreviewActive`;

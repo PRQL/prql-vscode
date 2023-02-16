@@ -144,6 +144,12 @@
           "default": true,
           "order": 1,
           "description": "Add PRQL compiler signature comment with SQL target dialect and compiler version to generated SQL."
+        },
+        "prql.addTargetDialectToSqlFilenames": {
+          "type": "boolean",
+          "default": false,
+          "order": 2,
+          "description": "Add target dialect suffix to the generated SQL filenames."
         }
       }
     }
