@@ -94,13 +94,30 @@ async function generateSqlFile() {
       window.showErrorMessage(`PRQL Compile \
         ${result[0].display ?? result[0].reason}`);
     } else {
-      // create sql file
       const prqlDocumentUri: Uri = editor.document.uri;
       const prqlFilePath = path.parse(prqlDocumentUri.fsPath);
+      const prqlSettings = workspace.getConfiguration('prql');
+      const target = <string>prqlSettings.get('target');
+      const addTargetDialectToSqlFilenames = <boolean>(
+        prqlSettings.get(constants.AddTargetDialectToSqlFilenames)
+      );
+
+      let sqlFilenameSuffix = '';
+      if (
+        addTargetDialectToSqlFilenames &&
+        target !== 'Generic' &&
+        target !== 'None'
+      ) {
+        sqlFilenameSuffix = `.${target.toLowerCase()}`;
+      }
+
+      // create sql filename based on prql file path, name, and current settings
       const sqlFilePath = path.join(
         prqlFilePath.dir,
-        `${prqlFilePath.name}.sql`
+        `${prqlFilePath.name}${sqlFilenameSuffix}.sql`
       );
+
+      // create sql file
       const sqlFileUri: Uri = Uri.file(sqlFilePath);
       const textEncoder: TextEncoder = new TextEncoder();
       const sqlContent: Uint8Array = textEncoder.encode(result);
