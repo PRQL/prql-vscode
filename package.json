@@ -132,11 +132,12 @@
             "MySql",
             "Postgres",
             "SQLite",
-            "Snowflake"
+            "Snowflake",
+            "None"
           ],
-          "default": "Ansi",
+          "default": "Generic",
           "order": 0,
-          "description": "PRQL compiler target dialect to use by default when generating SQL from pipeline definition files."
+          "description": "PRQL compiler target dialect to use when generating SQL from pipeline definition files."
         },
         "prql.addCompilerSignatureComment": {
           "type": "boolean",
