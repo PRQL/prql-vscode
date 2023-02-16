@@ -98,11 +98,16 @@ async function generateSqlFile() {
       const prqlFilePath = path.parse(prqlDocumentUri.fsPath);
       const prqlSettings = workspace.getConfiguration('prql');
       const target = <string>prqlSettings.get('target');
-      const addTargetDialectToSqlFilenames =
-        <boolean>prqlSettings.get(constants.AddTargetDialectToSqlFilenames);
+      const addTargetDialectToSqlFilenames = <boolean>(
+        prqlSettings.get(constants.AddTargetDialectToSqlFilenames)
+      );
 
       let sqlFilenameSuffix = '';
-      if (addTargetDialectToSqlFilenames && target !== 'Generic' && target !== 'None') {
+      if (
+        addTargetDialectToSqlFilenames &&
+        target !== 'Generic' &&
+        target !== 'None'
+      ) {
         sqlFilenameSuffix = `.${target.toLowerCase()}`;
       }
 
