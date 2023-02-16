@@ -1,19 +1,26 @@
-import { workspace } from 'vscode';
+import {
+  workspace,
+  WorkspaceConfiguration
+} from 'vscode';
 import * as prql from 'prql-js';
 import * as constants from './constants';
 
 export function compile(prqlString: string): string | ErrorMessage[] {
+  // get prql settings
+  const prqlSettings: WorkspaceConfiguration = workspace.getConfiguration('prql');
+  const target = <string>prqlSettings.get('target');
+  const addCompilerInfo = <boolean>prqlSettings.get(constants.AddCompilerSignatureComment);
+
   // create compile options from prql workspace settings
   const compileOptions = new prql.CompileOptions();
-  const target = <string>workspace.getConfiguration('prql').get('target');
-  const addCompilerInfo: boolean = <boolean>(
-    workspace
-      .getConfiguration('prql')
-      .get(constants.AddCompilerSignatureComment)
-  );
-  compileOptions.target = `sql.${target.toLowerCase()}`;
+  if (target !== 'None') {
+    // set prql target sql dialect
+    compileOptions.target = `sql.${target.toLowerCase()}`;
+  }
   compileOptions.signature_comment = addCompilerInfo;
+
   try {
+    // run prql compile
     return prql.compile(prqlString, compileOptions) as string;
   } catch (error) {
     if ((error as any)?.message) {
