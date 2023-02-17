@@ -96,8 +96,15 @@ async function compilePrql(
   };
 }
 
+/**
+ * Clears active SQL Preview context and view state.
+ *
+ * @param context Extension context.
+ */
 function clearSqlContext(context: ExtensionContext) {
   commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
+  commands.executeCommand('setContext',
+    ViewContext.ActivePrqlDocumentUri, undefined);
   context.workspaceState.update('prql.sql', undefined);
 }
 
@@ -116,6 +123,8 @@ function sendText(context: ExtensionContext, panel: WebviewPanel) {
 
       // set sql preview flag and update sql output
       commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
+      commands.executeCommand('setContext',
+        ViewContext.ActivePrqlDocumentUri, editor.document.uri);
       context.workspaceState.update('prql.sql', result.sql);
     });
   }
