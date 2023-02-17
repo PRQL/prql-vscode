@@ -24,8 +24,5 @@ export const ViewSettings = `${ExtensionId}.viewSettings`;
 export const AddCompilerSignatureComment = 'addCompilerSignatureComment';
 export const AddTargetDialectToSqlFilenames = 'addTargetDialectToSqlFilenames';
 
-// PRQL context keys
-export const SqlPreviewActive = `${ExtensionId}.sqlPreviewActive`;
-
 // VSCodes actions and commands
 export const WorkbenchActionOpenSettings = 'workbench.action.openSettings';

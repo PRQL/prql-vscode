@@ -21,6 +21,7 @@ import {
   normalizeThemeName,
 } from './utils';
 
+import { ViewContext } from '../views/viewContext';
 import { isPrqlDocument } from '../utils';
 import { compile } from '../compiler';
 import * as constants from '../constants';
@@ -96,7 +97,7 @@ async function compilePrql(
 }
 
 function clearSqlContext(context: ExtensionContext) {
-  commands.executeCommand('setContext', constants.SqlPreviewActive, false);
+  commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
   context.workspaceState.update('prql.sql', undefined);
 }
 
@@ -114,7 +115,7 @@ function sendText(context: ExtensionContext, panel: WebviewPanel) {
       panel.webview.postMessage(result);
 
       // set sql preview flag and update sql output
-      commands.executeCommand('setContext', constants.SqlPreviewActive, true);
+      commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
       context.workspaceState.update('prql.sql', result.sql);
     });
   }
