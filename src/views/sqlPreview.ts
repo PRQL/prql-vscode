@@ -21,7 +21,7 @@ import {
   normalizeThemeName,
 } from './utils';
 
-import { ViewContext } from '../views/viewContext';
+import { ViewContext } from './viewContext';
 import { isPrqlDocument } from '../utils';
 import { compile } from '../compiler';
 import * as constants from '../constants';

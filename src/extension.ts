@@ -1,5 +1,5 @@
 import { ExtensionContext } from 'vscode';
-import { activateSqlPreviewPanel } from './sql_output';
+import { activateSqlPreviewPanel } from './views/sqlPreview';
 import { activateDiagnostics } from './diagnostics';
 import { registerCommands } from './commands';
 
