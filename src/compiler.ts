@@ -1,4 +1,8 @@
-import { workspace, WorkspaceConfiguration } from 'vscode';
+import {
+  workspace,
+  WorkspaceConfiguration
+} from 'vscode';
+
 import * as prql from 'prql-js';
 import * as constants from './constants';
 
@@ -7,9 +11,7 @@ export function compile(prqlString: string): string | ErrorMessage[] {
   const prqlSettings: WorkspaceConfiguration =
     workspace.getConfiguration('prql');
   const target = <string>prqlSettings.get('target');
-  const addCompilerInfo = <boolean>(
-    prqlSettings.get(constants.AddCompilerSignatureComment)
-  );
+  const addCompilerInfo = <boolean>prqlSettings.get(constants.AddCompilerSignatureComment);
 
   // create compile options from prql workspace settings
   const compileOptions = new prql.CompileOptions();
@@ -19,12 +21,14 @@ export function compile(prqlString: string): string | ErrorMessage[] {
   try {
     // run prql compile
     return prql.compile(prqlString, compileOptions) as string;
-  } catch (error) {
+  }
+  catch (error) {
     if ((error as any)?.message) {
       try {
         const errorMessages = JSON.parse((error as any).message);
         return errorMessages.inner as ErrorMessage[];
-      } catch (ignored) {
+      }
+      catch (ignored) {
         throw error;
       }
     }

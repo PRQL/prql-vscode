@@ -23,7 +23,6 @@ function getRange(location: SourceLocation | null): Range {
       location.end[1]
     );
   }
-
   return new Range(new Position(0, 0), new Position(0, 0));
 }
 
@@ -36,13 +35,15 @@ function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
 
     if (!Array.isArray(result)) {
       diagnosticCollection.set(editor.document.uri, []);
-    } else {
+    }
+    else {
       const range = getRange(result[0].location);
       const diagnostic = new Diagnostic(
         range,
         result[0].reason ?? 'Syntax Error',
         DiagnosticSeverity.Error
       );
+
       diagnosticCollection.set(editor.document.uri, [diagnostic]);
     }
   }

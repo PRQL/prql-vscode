@@ -26,19 +26,15 @@ import { isPrqlDocument } from '../utils';
 import { compile } from '../compiler';
 import * as constants from '../constants';
 
-function getCompiledTemplate(
-  context: ExtensionContext,
-  webview: Webview
-): string {
+function getCompiledTemplate(context: ExtensionContext, webview: Webview): string {
+  // load webview html template, view script, and stylesheet
   const template = readFileSync(
-    getResourceUri(context, 'sql_output.html').fsPath,
-    'utf-8'
-  );
+    getResourceUri(context, 'sql_output.html').fsPath, 'utf-8');
   const templateJS = getResourceUri(context, 'sql_output.js');
   const templateCss = getResourceUri(context, 'sql_output.css');
 
-  return (template as string)
-    .replace(/##CSP_SOURCE##/g, webview.cspSource)
+  // inject web resource urls in the loaded webview html template
+  return template.replace(/##CSP_SOURCE##/g, webview.cspSource)
     .replace('##JS_URI##', webview.asWebviewUri(templateJS).toString())
     .replace('##CSS_URI##', webview.asWebviewUri(templateCss).toString());
 }
@@ -70,10 +66,8 @@ async function getHighlighter(): Promise<shiki.Highlighter> {
   return (highlighter = await shiki.getHighlighter({ theme: getThemeName() }));
 }
 
-async function compilePrql(
-  text: string,
-  lastOkHtml: string | undefined
-): Promise<CompilationResult> {
+async function compilePrql(text: string,
+  lastOkHtml: string | undefined): Promise<CompilationResult> {
   const result = compile(text);
 
   if (Array.isArray(result)) {
@@ -136,10 +130,9 @@ function sendThemeChanged(panel: WebviewPanel) {
   panel.webview.postMessage({ status: 'theme-changed' });
 }
 
-function createWebviewPanel(
-  context: ExtensionContext,
-  onDidDispose: () => any
-): WebviewPanel {
+function createWebviewPanel(context: ExtensionContext,
+  onDidDispose: () => any): WebviewPanel {
+
   const panel = window.createWebviewPanel(
     constants.SqlPreviewPanel,
     constants.SqlPreviewTitle,
@@ -153,6 +146,7 @@ function createWebviewPanel(
       localResourceRoots: [Uri.joinPath(context.extensionUri, 'resources')],
     }
   );
+
   panel.webview.html = getCompiledTemplate(context, panel.webview);
   panel.iconPath = getResourceUri(context, 'favicon.ico');
 
@@ -171,6 +165,7 @@ function createWebviewPanel(
   );
 
   let lastEditor: TextEditor | undefined = undefined;
+
   disposables.push(
     window.onDidChangeActiveTextEditor((editor) => {
       if (editor && editor !== lastEditor) {
@@ -190,8 +185,7 @@ function createWebviewPanel(
     })
   );
 
-  panel.onDidDispose(
-    () => {
+  panel.onDidDispose(() => {
       clearSqlContext(context);
       disposables.forEach((d) => d.dispose());
       onDidDispose();
@@ -201,18 +195,17 @@ function createWebviewPanel(
   );
 
   sendText(context, panel);
-
   return panel;
 }
 
 export function activateSqlPreviewPanel(context: ExtensionContext) {
   let panel: WebviewPanel | undefined = undefined;
   let panelViewColumn: ViewColumn | undefined = undefined;
-
   const command = commands.registerCommand(constants.OpenSqlPreview, () => {
     if (panel) {
       panel.reveal(panelViewColumn, true);
-    } else {
+    }
+    else {
       panel = createWebviewPanel(context, () => (panel = undefined));
       panelViewColumn = panel?.viewColumn;
     }

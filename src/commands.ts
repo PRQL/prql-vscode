@@ -22,7 +22,6 @@ import { TextEncoder } from 'util';
 export function registerCommands(context: ExtensionContext) {
   registerCommand(context, constants.GenerateSqlFile, generateSqlFile);
   registerCommand(context, constants.ViewSettings, viewPrqlSettings);
-
   registerCommand(context, constants.CopySqlToClipboard, () => {
     const sql: string | undefined = context.workspaceState.get('prql.sql');
     if (sql) {
@@ -45,21 +44,21 @@ function registerCommand(
   context: ExtensionContext,
   commandId: string,
   callback: (...args: any[]) => any,
-  thisArg?: any
-): void {
+  thisArg?: any): void {
+
   const command: Disposable = commands.registerCommand(
     commandId,
     async (...args) => {
       try {
         await callback(...args);
-      } catch (e: unknown) {
+      }
+      catch (e: unknown) {
         window.showErrorMessage(String(e));
         console.error(e);
       }
     },
     thisArg
   );
-
   context.subscriptions.push(command);
 }
 
@@ -67,10 +66,7 @@ function registerCommand(
  * Opens vscode Settings panel with PRQL settings.
  */
 async function viewPrqlSettings() {
-  await commands.executeCommand(
-    constants.WorkbenchActionOpenSettings,
-    constants.ExtensionId
-  );
+  await commands.executeCommand(constants.WorkbenchActionOpenSettings, constants.ExtensionId);
 }
 
 /**
@@ -93,29 +89,22 @@ async function generateSqlFile() {
     if (Array.isArray(result)) {
       window.showErrorMessage(`PRQL Compile \
         ${result[0].display ?? result[0].reason}`);
-    } else {
+    }
+    else {
       const prqlDocumentUri: Uri = editor.document.uri;
       const prqlFilePath = path.parse(prqlDocumentUri.fsPath);
       const prqlSettings = workspace.getConfiguration('prql');
       const target = <string>prqlSettings.get('target');
-      const addTargetDialectToSqlFilenames = <boolean>(
-        prqlSettings.get(constants.AddTargetDialectToSqlFilenames)
-      );
+      const addTargetDialectToSqlFilenames =
+        <boolean>prqlSettings.get(constants.AddTargetDialectToSqlFilenames);
 
       let sqlFilenameSuffix = '';
-      if (
-        addTargetDialectToSqlFilenames &&
-        target !== 'Generic' &&
-        target !== 'None'
-      ) {
+      if (addTargetDialectToSqlFilenames && target !== 'Generic' && target !== 'None') {
         sqlFilenameSuffix = `.${target.toLowerCase()}`;
       }
 
       // create sql filename based on prql file path, name, and current settings
-      const sqlFilePath = path.join(
-        prqlFilePath.dir,
-        `${prqlFilePath.name}${sqlFilenameSuffix}.sql`
-      );
+      const sqlFilePath = path.join(prqlFilePath.dir, `${prqlFilePath.name}${sqlFilenameSuffix}.sql`);
 
       // create sql file
       const sqlFileUri: Uri = Uri.file(sqlFilePath);

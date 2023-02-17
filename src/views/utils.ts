@@ -1,4 +1,7 @@
-import { ExtensionContext, Uri } from 'vscode';
+import {
+  ExtensionContext,
+  Uri
+} from 'vscode';
 
 export interface CompilationResult {
   status: 'ok' | 'error';
