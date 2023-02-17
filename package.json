@@ -23,6 +23,7 @@
   "main": "out/extension.js",
   "activationEvents": [
     "onLanguage:prql",
+    "onWebviewPanel:prql.sqlPreviewPanel",
     "onCommand:prql.openSqlPreview",
     "onCommand:prql.generateSqlFile",
     "onCommand:prql.copySqlToClipboard",
