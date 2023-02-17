@@ -45,6 +45,10 @@ export class SqlPreview {
   private _viewConfig: any = {};
   private _disposables: Disposable[] = [];
 
+  private _highlighter: shiki.Highlighter | undefined;
+  private _lastEditor: TextEditor | undefined = undefined;
+  private _lastSqlHtml: string | undefined;
+
   /**
      * Reveals current Sql Preview webview
      * or creates new Sql Preview webview panel
@@ -72,7 +76,7 @@ export class SqlPreview {
     else {
       if (!webviewPanel) {
         // create new webview panel for the prql document sql preview
-        webviewPanel = SqlPreview.createWebviewPanel(documentUri);
+        webviewPanel = SqlPreview.createWebviewPanel(context, documentUri);
       }
       else {
         // enable scripts for existing webview panel
@@ -84,9 +88,8 @@ export class SqlPreview {
 
       if (webviewPanel) {
         // set custom sql preview panel icon
-        // TODO: create smaller prql.svg icon instead of using large prql ext. logo png
         webviewPanel.iconPath = Uri.file(
-          path.join(context.extensionUri.fsPath, './resources/prql-logo.png'));
+          path.join(context.extensionUri.fsPath, './resources/favicon.ico'));
       }
 
       // set as current sql preview
@@ -101,15 +104,16 @@ export class SqlPreview {
   /**
    * Creates new webview panel for the given prql source document Uri.
    *
+   * @param context Extension context.
    * @param documentUri PRQL source document Uri.
    * @returns New webview panel instance.
    */
-  private static createWebviewPanel(documentUri: Uri): WebviewPanel {
+  private static createWebviewPanel(context: ExtensionContext, documentUri: Uri): WebviewPanel {
     // create new webview panel for sql preview
     const fileName = path.basename(documentUri.path, '.prql');
     return window.createWebviewPanel(
       constants.SqlPreviewPanel, // webview panel view type
-      `${constants.SqlPreviewTitle}: ${fileName}`, // webview panel title
+      `${constants.SqlPreviewTitle}: ${fileName}.sql`, // webview panel title
       {
         viewColumn: ViewColumn.Beside, // display it on the side
         preserveFocus: true
@@ -118,7 +122,8 @@ export class SqlPreview {
         enableScripts: true, // enable JavaScript in webview
         enableCommandUris: true,
         enableFindWidget: true,
-        retainContextWhenHidden: true
+        retainContextWhenHidden: true,
+        localResourceRoots: [Uri.joinPath(context.extensionUri, 'resources')],
       }
     );
   }
@@ -169,24 +174,54 @@ export class SqlPreview {
         }
       });
 
-    // dispose view resources when this webview panel is closed by the user or via vscode apis
-    this._webviewPanel.onDidDispose(this.dispose, this, this._disposables);
+    // add prql text document change handler
+    [workspace.onDidOpenTextDocument, workspace.onDidChangeTextDocument].forEach(
+      (event) => {
+        this._disposables.push(
+          event(
+            debounce(() => {
+              this.sendText(context, this._webviewPanel);
+            }, 10)
+          )
+        );
+      }
+    );
+
+    // add active text editor change handler
+    this._disposables.push(
+      window.onDidChangeActiveTextEditor((editor) => {
+        if (editor && editor !== this._lastEditor) {
+          this._lastEditor = editor;
+          this._lastSqlHtml = undefined;
+          this.clearSqlContext(context);
+          this.sendText(context, this._webviewPanel);
+        }
+      })
+    );
+
+    // add color theme change handler
+    this._disposables.push(
+      window.onDidChangeActiveColorTheme(() => {
+        this._highlighter = undefined;
+        this._lastSqlHtml = undefined;
+        this.sendThemeChanged(this._webviewPanel);
+      })
+    );
+
+    // add dispose resources handler
+    this._webviewPanel.onDidDispose(() => this.dispose(context));
   }
 
   /**
     * Disposes Sql Preview webview resources when webview panel is closed.
     */
-  public dispose() {
+  public dispose(context: ExtensionContext) {
     SqlPreview.currentView = undefined;
     SqlPreview._views.delete(this._viewUri.toString(true)); // skip encoding
-    while (this._disposables.length) {
-      const disposable: Disposable | undefined = this._disposables.pop();
-      if (disposable) {
-        disposable.dispose();
-      }
-    }
+    this._disposables.forEach((d) => d.dispose());
 
     // clear active view context value
+    this.clearSqlContext(context);
     commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
   }
 
@@ -211,7 +246,7 @@ export class SqlPreview {
      */
   private configure(context: ExtensionContext): void {
     // set view html content for the webview panel
-    this.webviewPanel.webview.html = getCompiledTemplate(context, this.webviewPanel.webview);
+    this.webviewPanel.webview.html = this.getCompiledTemplate(context, this.webviewPanel.webview);
     // this.getWebviewContent(this.webviewPanel.webview, this._extensionUri, viewConfig);
 
     // process webview messages
@@ -224,6 +259,8 @@ export class SqlPreview {
           break;
       }
     }, undefined, this._disposables);
+
+    this.sendText(context, this._webviewPanel);
   }
 
   /**
@@ -235,6 +272,88 @@ export class SqlPreview {
       command: 'refresh',
       documentUrl: this.documentUri.fsPath
     });
+  }
+
+  private sendText(context: ExtensionContext, panel: WebviewPanel) {
+    const editor = window.activeTextEditor;
+
+    if (panel.visible && editor && isPrqlDocument(editor)) {
+      const text = editor.document.getText();
+      this.compilePrql(text, this._lastSqlHtml).then((result) => {
+        if (result.status === 'ok') {
+          this._lastSqlHtml = result.html;
+        }
+        panel.webview.postMessage(result);
+
+        // set sql preview flag and update sql output
+        commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
+        commands.executeCommand('setContext',
+          ViewContext.LastActivePrqlDocumentUri, editor.document.uri);
+        context.workspaceState.update('prql.sql', result.sql);
+      });
+    }
+
+    if (!panel.visible || !panel.active) {
+      this.clearSqlContext(context);
+    }
+  }
+
+  private async sendThemeChanged(panel: WebviewPanel) {
+    panel.webview.postMessage({ status: 'theme-changed' });
+  }
+
+  private async compilePrql(text: string,
+    lastOkHtml: string | undefined): Promise<CompilationResult> {
+    const result = compile(text);
+
+    if (Array.isArray(result)) {
+      return {
+        status: 'error',
+        error: {
+          message: result[0].display ?? result[0].reason,
+        },
+        lastHtml: lastOkHtml,
+      };
+    }
+
+    const highlighter = await this.getHighlighter();
+    const highlighted = highlighter.codeToHtml(result, { lang: 'sql' });
+
+    return {
+      status: 'ok',
+      html: highlighted,
+      sql: result,
+    };
+  }
+
+  /**
+   * Clears active SQL Preview context and view state.
+   *
+   * @param context Extension context.
+   */
+  private async clearSqlContext(context: ExtensionContext) {
+    commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
+    context.workspaceState.update('prql.sql', undefined);
+  }
+
+  private async getHighlighter(): Promise<shiki.Highlighter> {
+    if (this._highlighter) {
+      return Promise.resolve(this._highlighter);
+    }
+    return (this._highlighter = await shiki.getHighlighter({theme: this.themeName}));
+  }
+
+  get themeName(): string {
+    const currentThemeName = workspace.getConfiguration('workbench')
+      .get<string>('colorTheme', 'dark-plus');
+
+    for (const themeName of [currentThemeName, normalizeThemeName(currentThemeName)]) {
+      if (shiki.BUNDLED_THEMES.includes(themeName as shiki.Theme)) {
+        return themeName;
+      }
+    }
+
+    return 'css-variables';
   }
 
   /**
@@ -265,189 +384,18 @@ export class SqlPreview {
   get viewUri(): Uri {
     return this._viewUri;
   }
-}
 
-function getCompiledTemplate(context: ExtensionContext, webview: Webview): string {
-  // load webview html template, sql preview script and stylesheet
-  const htmlTemplate = readFileSync(
-    getResourceUri(context, 'sql-preview.html').fsPath, 'utf-8');
-  const sqlPreviewScriptUri: Uri = getResourceUri(context, 'sqlPreview.js');
-  const sqlPreviewStylesheetUri: Uri = getResourceUri(context, 'sql-preview.css');
 
-  // inject web resource urls into the loaded webview html template
-  return htmlTemplate.replace(/##CSP_SOURCE##/g, webview.cspSource)
-    .replace('##JS_URI##', webview.asWebviewUri(sqlPreviewScriptUri).toString())
-    .replace('##CSS_URI##', webview.asWebviewUri(sqlPreviewStylesheetUri).toString());
-}
+  private getCompiledTemplate(context: ExtensionContext, webview: Webview): string {
+    // load webview html template, sql preview script and stylesheet
+    const htmlTemplate = readFileSync(
+      getResourceUri(context, 'sql-preview.html').fsPath, 'utf-8');
+    const sqlPreviewScriptUri: Uri = getResourceUri(context, 'sqlPreview.js');
+    const sqlPreviewStylesheetUri: Uri = getResourceUri(context, 'sql-preview.css');
 
-function getThemeName(): string {
-  const currentThemeName = workspace.getConfiguration('workbench')
-    .get<string>('colorTheme', 'dark-plus');
-
-  for (const themeName of [currentThemeName, normalizeThemeName(currentThemeName)]) {
-    if (shiki.BUNDLED_THEMES.includes(themeName as shiki.Theme)) {
-      return themeName;
-    }
+    // inject web resource urls into the loaded webview html template
+    return htmlTemplate.replace(/##CSP_SOURCE##/g, webview.cspSource)
+      .replace('##JS_URI##', webview.asWebviewUri(sqlPreviewScriptUri).toString())
+      .replace('##CSS_URI##', webview.asWebviewUri(sqlPreviewStylesheetUri).toString());
   }
-
-  return 'css-variables';
-}
-
-let highlighter: shiki.Highlighter | undefined;
-
-async function getHighlighter(): Promise<shiki.Highlighter> {
-  if (highlighter) {
-    return Promise.resolve(highlighter);
-  }
-
-  return (highlighter = await shiki.getHighlighter({ theme: getThemeName() }));
-}
-
-async function compilePrql(text: string,
-  lastOkHtml: string | undefined): Promise<CompilationResult> {
-  const result = compile(text);
-
-  if (Array.isArray(result)) {
-    return {
-      status: 'error',
-      error: {
-        message: result[0].display ?? result[0].reason,
-      },
-      lastHtml: lastOkHtml,
-    };
-  }
-
-  const highlighter = await getHighlighter();
-  const highlighted = highlighter.codeToHtml(result, { lang: 'sql' });
-
-  return {
-    status: 'ok',
-    html: highlighted,
-    sql: result,
-  };
-}
-
-/**
- * Clears active SQL Preview context and view state.
- *
- * @param context Extension context.
- */
-function clearSqlContext(context: ExtensionContext) {
-  commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
-  context.workspaceState.update('prql.sql', undefined);
-}
-
-let lastOkHtml: string | undefined;
-
-function sendText(context: ExtensionContext, panel: WebviewPanel) {
-  const editor = window.activeTextEditor;
-
-  if (panel.visible && editor && isPrqlDocument(editor)) {
-    const text = editor.document.getText();
-    compilePrql(text, lastOkHtml).then((result) => {
-      if (result.status === 'ok') {
-        lastOkHtml = result.html;
-      }
-      panel.webview.postMessage(result);
-
-      // set sql preview flag and update sql output
-      commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
-      commands.executeCommand('setContext',
-        ViewContext.LastActivePrqlDocumentUri, editor.document.uri);
-      context.workspaceState.update('prql.sql', result.sql);
-    });
-  }
-
-  if (!panel.visible || !panel.active) {
-    clearSqlContext(context);
-  }
-}
-
-function sendThemeChanged(panel: WebviewPanel) {
-  panel.webview.postMessage({ status: 'theme-changed' });
-}
-
-export function createWebviewPanel(context: ExtensionContext,
-  onDidDispose?: () => any): WebviewPanel {
-
-  const panel = window.createWebviewPanel(
-    constants.SqlPreviewPanel,
-    constants.SqlPreviewTitle,
-    {
-      viewColumn: ViewColumn.Beside,
-      preserveFocus: true,
-    },
-    {
-      enableFindWidget: false,
-      enableScripts: true,
-      localResourceRoots: [Uri.joinPath(context.extensionUri, 'resources')],
-    }
-  );
-
-  panel.webview.html = getCompiledTemplate(context, panel.webview);
-  panel.iconPath = getResourceUri(context, 'favicon.ico');
-
-  const disposables: Disposable[] = [];
-
-  [workspace.onDidOpenTextDocument, workspace.onDidChangeTextDocument].forEach(
-    (event) => {
-      disposables.push(
-        event(
-          debounce(() => {
-            sendText(context, panel);
-          }, 10)
-        )
-      );
-    }
-  );
-
-  let lastEditor: TextEditor | undefined = undefined;
-
-  disposables.push(
-    window.onDidChangeActiveTextEditor((editor) => {
-      if (editor && editor !== lastEditor) {
-        lastEditor = editor;
-        lastOkHtml = undefined;
-        clearSqlContext(context);
-        sendText(context, panel);
-      }
-    })
-  );
-
-  disposables.push(
-    window.onDidChangeActiveColorTheme(() => {
-      highlighter = undefined;
-      lastOkHtml = undefined;
-      sendThemeChanged(panel);
-    })
-  );
-
-  panel.onDidDispose(() => {
-      clearSqlContext(context);
-      disposables.forEach((d) => d.dispose());
-      if (onDidDispose !== undefined) {
-        onDidDispose();
-      }
-    },
-    undefined,
-    context.subscriptions
-  );
-
-  sendText(context, panel);
-  return panel;
-}
-
-export function activateSqlPreviewPanel(context: ExtensionContext) {
-  let panel: WebviewPanel | undefined = undefined;
-  let panelViewColumn: ViewColumn | undefined = undefined;
-  const command = commands.registerCommand(constants.OpenSqlPreview, () => {
-    if (panel) {
-      panel.reveal(panelViewColumn, true);
-    }
-    else {
-      panel = createWebviewPanel(context, () => (panel = undefined));
-      panelViewColumn = panel?.viewColumn;
-    }
-  });
-  context.subscriptions.push(command);
 }

@@ -13,6 +13,7 @@ import * as constants from './constants';
 
 import { compile } from './compiler';
 import { TextEncoder } from 'util';
+import { SqlPreview } from './views/sqlPreview';
 
 /**
  * Registers PRQL extension commands.
@@ -22,6 +23,17 @@ import { TextEncoder } from 'util';
 export function registerCommands(context: ExtensionContext) {
   registerCommand(context, constants.GenerateSqlFile, generateSqlFile);
   registerCommand(context, constants.ViewSettings, viewPrqlSettings);
+
+  registerCommand(context, constants.OpenSqlPreview, (documentUri: Uri) => {
+    if (!documentUri && window.activeTextEditor) {
+      // use active text editor document Uri
+      documentUri = window.activeTextEditor.document.uri;
+    }
+
+    // render Sql Preview for the requested PRQL document
+    SqlPreview.render(context, documentUri);
+  });
+
   registerCommand(context, constants.CopySqlToClipboard, () => {
     const sql: string | undefined = context.workspaceState.get('prql.sql');
     if (sql) {
