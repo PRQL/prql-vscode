@@ -46,9 +46,10 @@ export class SqlPreview {
   private _disposables: Disposable[] = [];
 
   /**
-     * Reveals current sql preview webview
-     * or creates new sql preview webview panel
-     * for the given PRQL document Uri from and active editor.
+     * Reveals current Sql Preview webview
+     * or creates new Sql Preview webview panel
+     * for the given PRQL document Uri
+     * from an open and active PRQL document editor.
      *
      * @param context Extension context.
      * @param documentUri PRQL document Uri.
@@ -83,15 +84,16 @@ export class SqlPreview {
 
       if (webviewPanel) {
         // set custom sql preview panel icon
+        // TODO: create smaller prql.svg icon instead of using large prql ext. logo png
         webviewPanel.iconPath = Uri.file(
-          path.join(context.extensionUri.fsPath, './resources/icons/prql-logo.png'));
+          path.join(context.extensionUri.fsPath, './resources/prql-logo.png'));
       }
 
       // set as current sql preview
       SqlPreview.currentView = new SqlPreview(context, webviewPanel, documentUri, viewConfig);
     }
 
-    // update table view context values
+    // update sql preview context values
     commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
     commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, documentUri);
   }
@@ -109,7 +111,7 @@ export class SqlPreview {
       constants.SqlPreviewPanel, // webview panel view type
       `${constants.SqlPreviewTitle}: ${fileName}`, // webview panel title
       {
-        viewColumn: ViewColumn.Beside, // use active view column for display
+        viewColumn: ViewColumn.Beside, // display it on the side
         preserveFocus: true
       },
       { // webview panel options
@@ -127,13 +129,13 @@ export class SqlPreview {
    * @param context Extension context.
    * @param webviewPanel Reference to the webview panel.
    * @param documentUri PRQL document Uri.
-   * @param tableConfig Optional view config to restore.
+   * @param viewConfig Optional view config to restore.
    */
   private constructor(context: ExtensionContext,
     webviewPanel: WebviewPanel,
     documentUri: Uri, viewConfig?: any) {
 
-    // save webview panel and extension uri
+    // save view context info
     this._webviewPanel = webviewPanel;
     this._extensionUri = context.extensionUri;
     this._documentUri = documentUri;
@@ -167,7 +169,7 @@ export class SqlPreview {
         }
       });
 
-    // dispose view resources when thi webview panel is closed by the user or via vscode apis
+    // dispose view resources when this webview panel is closed by the user or via vscode apis
     this._webviewPanel.onDidDispose(this.dispose, this, this._disposables);
   }
 
@@ -225,7 +227,7 @@ export class SqlPreview {
   }
 
   /**
-    * Reloads table view on data save changes or vscode IDE realod.
+    * Reloads Sql Preivew for the PRQL document Uri or on vscode IDE realod.
     */
   public async refresh(): Promise<void> {
     // update view state
