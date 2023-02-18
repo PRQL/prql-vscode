@@ -16,10 +16,6 @@ import * as shiki from 'shiki';
 import { readFileSync } from 'node:fs';
 import * as path from 'path';
 
-import {
-  debounce,
-} from './utils';
-
 import { ViewContext } from './viewContext';
 import { CompilationResult } from './compilationResult';
 import { compile } from '../compiler';
@@ -176,7 +172,7 @@ export class SqlPreview {
       (event) => {
         this._disposables.push(
           event(
-            debounce(() => {
+            this.debounce(() => {
               this.sendText(context, this._webviewPanel);
             }, 10)
           )
@@ -207,6 +203,23 @@ export class SqlPreview {
 
     // add dispose resources handler
     this._webviewPanel.onDidDispose(() => this.dispose(context));
+  }
+
+  /**
+   * Debounce for sql preview updates on prql text changes.
+   *
+   * @param fn
+   * @param timeout
+   * @returns
+   */
+  private debounce(fn: () => any, timeout: number) {
+    let timer: NodeJS.Timeout | undefined;
+    return () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        fn();
+      }, timeout);
+    };
   }
 
   /**
