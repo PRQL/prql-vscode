@@ -17,13 +17,13 @@ import { readFileSync } from 'node:fs';
 import * as path from 'path';
 
 import {
-  CompilationResult,
   debounce,
   getResourceUri,
   normalizeThemeName,
 } from './utils';
 
 import { ViewContext } from './viewContext';
+import { CompilationResult } from './compilationResult';
 import { compile } from '../compiler';
 import * as constants from '../constants';
 
