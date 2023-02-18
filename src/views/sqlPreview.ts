@@ -263,7 +263,7 @@ export class SqlPreview {
      * @param context Extension context.
      * @param viewConfig Sql Preview config.
      */
-  private configure(context: ExtensionContext): void {
+  private async configure(context: ExtensionContext) {
     // set view html content for the webview panel
     this.webviewPanel.webview.html = this.getHtmlTemplate(context, this.webviewPanel.webview);
     // this.getWebviewContent(this.webviewPanel.webview, this._extensionUri, viewConfig);
@@ -279,8 +279,15 @@ export class SqlPreview {
       }
     }, undefined, this._disposables);
 
+    // load initial prql code from file
+    console.log(this.documentUri.fsPath);
+    const prqlContent:Uint8Array = await workspace.fs.readFile(
+      Uri.file(this.documentUri.fsPath));
+    const textDecoder = new TextDecoder('utf8');
+    const prqlCode = textDecoder.decode(prqlContent);
+
     // send initial prql compile result to webview
-    this.update(context);
+    this.update(context, prqlCode);
   }
 
   /**
@@ -299,27 +306,21 @@ export class SqlPreview {
    * from the active PRQL text editor.
    *
    * @param context Extension context.
+   * @param prqlCode Optional prql code overwrite to use
+   * instead of text from the active vscode PRQL editor.
    */
-  private update(context: ExtensionContext) {
+  private update(context: ExtensionContext, prqlCode?: string) {
     // check active text editor
     const editor = window.activeTextEditor;
     if (this.webviewPanel.visible && editor &&
         editor.document.languageId === 'prql' &&
         editor.document.uri.fsPath === this.documentUri.fsPath) {
-
-      // get updated prql code
+      // get updated prql code from the active PRQL text editor
       const prqlCode = editor.document.getText();
-      this.compilePrql(prqlCode, this._lastSqlHtml).then((compilationResult) => {
-        if (compilationResult.status === 'ok') {
-          // save last valid sql html output to show when errors occur later
-          this._lastSqlHtml = compilationResult.html;
-        }
-        this.webviewPanel.webview.postMessage(compilationResult);
-
-        // set sql preview flag and update sql output
-        this.resetSqlPreviewContext();
-        context.workspaceState.update('prql.sql', compilationResult.sql);
-      });
+      this.processPrql(context, prqlCode);
+    }
+    else if (prqlCode) {
+      this.processPrql(context, prqlCode);
     }
 
     if (!this.webviewPanel.visible || !this.webviewPanel.active) {
@@ -349,6 +350,28 @@ export class SqlPreview {
   }
 
   /**
+   * Processes given prql code.
+   *
+   * @param context Extension context.
+   * @param prqlCode PRQL code to process.
+   */
+  private async processPrql(context: ExtensionContext, prqlCode: string) {
+    this.compilePrql(prqlCode, this._lastSqlHtml).then((compilationResult) => {
+      if (compilationResult.status === 'ok') {
+        // save last valid sql html output to show when errors occur later
+        this._lastSqlHtml = compilationResult.html;
+      }
+
+      // update webview
+      this.webviewPanel.webview.postMessage(compilationResult);
+
+      // reset active sql preview context and update last sql in workspace state
+      this.resetSqlPreviewContext();
+      context.workspaceState.update('prql.sql', compilationResult.sql);
+    });
+  }
+
+  /**
    * Compiles prql code and returns generated sql,
    * and formatted html sql compilation result.
    *
@@ -358,9 +381,11 @@ export class SqlPreview {
    */
   private async compilePrql(prqlCode: string,
     lastSqlHtml: string | undefined): Promise<CompilationResult> {
-    const result = compile(prqlCode);
 
+    // compile given prql code
+    const result = compile(prqlCode);
     if (Array.isArray(result)) {
+      // return last valid sql html ouput with new error info
       return {
         status: 'error',
         error: {
@@ -374,11 +399,7 @@ export class SqlPreview {
     const highlighter = await this.getHighlighter();
     const sqlHtml = highlighter.codeToHtml(result, {lang: 'sql'});
 
-    return {
-      status: 'ok',
-      html: sqlHtml,
-      sql: result,
-    };
+    return {status: 'ok', html: sqlHtml, sql: result};
   }
 
   /**
