@@ -18,8 +18,6 @@ import * as path from 'path';
 
 import {
   debounce,
-  getResourceUri,
-  normalizeThemeName,
 } from './utils';
 
 import { ViewContext } from './viewContext';
@@ -245,7 +243,7 @@ export class SqlPreview {
      */
   private configure(context: ExtensionContext): void {
     // set view html content for the webview panel
-    this.webviewPanel.webview.html = this.getCompiledTemplate(context, this.webviewPanel.webview);
+    this.webviewPanel.webview.html = this.getHtmlTemplate(context, this.webviewPanel.webview);
     // this.getWebviewContent(this.webviewPanel.webview, this._extensionUri, viewConfig);
 
     // process webview messages
@@ -342,16 +340,26 @@ export class SqlPreview {
     return (this._highlighter = await shiki.getHighlighter({theme: this.themeName}));
   }
 
+  /**
+   * Gets shiki highlighter theme name that matches current vscode color theme
+   * to use it as the UI theme for this Sql Preview webview.
+   */
   get themeName(): string {
-    const currentThemeName = workspace.getConfiguration('workbench')
-      .get<string>('colorTheme', 'dark-plus');
+    // get current vscode color UI theme name
+    let colorTheme = workspace.getConfiguration('workbench')
+      .get<string>('colorTheme', 'dark-plus'); // default
 
-    for (const themeName of [currentThemeName, normalizeThemeName(currentThemeName)]) {
-      if (shiki.BUNDLED_THEMES.includes(themeName as shiki.Theme)) {
-        return themeName;
-      }
+    if (shiki.BUNDLED_THEMES.includes(colorTheme as shiki.Theme)) {
+      return colorTheme;
     }
 
+    // try normalized color theme name
+    colorTheme = colorTheme.toLowerCase().replace('theme', '').replace(/\s+/g, '-');
+    if (shiki.BUNDLED_THEMES.includes(colorTheme as shiki.Theme)) {
+      return colorTheme;
+    }
+
+    // ??? not sure what this means
     return 'css-variables';
   }
 
@@ -385,16 +393,34 @@ export class SqlPreview {
   }
 
 
-  private getCompiledTemplate(context: ExtensionContext, webview: Webview): string {
+  /**
+   * Loads and creates html template for Sql Preview webview.
+   *
+   * @param context Extension context.
+   * @param webview Sql Preview webview.
+   * @returns Html template to use for Sql Preview webview.
+   */
+  private getHtmlTemplate(context: ExtensionContext, webview: Webview): string {
     // load webview html template, sql preview script and stylesheet
     const htmlTemplate = readFileSync(
-      getResourceUri(context, 'sql-preview.html').fsPath, 'utf-8');
-    const sqlPreviewScriptUri: Uri = getResourceUri(context, 'sqlPreview.js');
-    const sqlPreviewStylesheetUri: Uri = getResourceUri(context, 'sql-preview.css');
+      this.getResourceUri(context, 'sql-preview.html').fsPath, 'utf-8');
+    const sqlPreviewScriptUri: Uri = this.getResourceUri(context, 'sqlPreview.js');
+    const sqlPreviewStylesheetUri: Uri = this.getResourceUri(context, 'sql-preview.css');
 
-    // inject web resource urls into the loaded webview html template
+    // inject webview resource urls into the loaded webview html template
     return htmlTemplate.replace(/##CSP_SOURCE##/g, webview.cspSource)
       .replace('##JS_URI##', webview.asWebviewUri(sqlPreviewScriptUri).toString())
       .replace('##CSS_URI##', webview.asWebviewUri(sqlPreviewStylesheetUri).toString());
+  }
+
+  /**
+   * Gets webview resource Uri from extension directory.
+   *
+   * @param context Extension context.
+   * @param filename Resource filename to create resource Uri.
+   * @returns Webview resource Uri.
+   */
+  private getResourceUri(context: ExtensionContext, fileName: string) {
+    return Uri.joinPath(context.extensionUri, 'resources', fileName);
   }
 }
