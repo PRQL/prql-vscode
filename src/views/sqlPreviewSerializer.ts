@@ -11,7 +11,7 @@ import { SqlPreview } from './sqlPreview';
 import * as constants from '../constants';
 
 /**
- * Sql Preview webview panel serializer for restoring active Sql Preview on vscode reload.
+ * Sql Preview webview panel serializer for restoring open Sql Previews on vscode reload.
  */
 export class SqlPreviewSerializer implements WebviewPanelSerializer {
 
@@ -29,13 +29,13 @@ export class SqlPreviewSerializer implements WebviewPanelSerializer {
   /**
    * Creates new Sql Preview webview serializer.
    *
-   * @param extensionUri Extension directory Uri.
+   * @param extensionUri Extension context.
    */
   constructor(private readonly context: ExtensionContext) {
   }
 
   /**
-   * Restores last active Sql Preview webview panel on vscode reload.
+   * Restores open Sql Preview webview panel on vscode reload.
    *
    * @param webviewPanel Webview panel to restore.
    * @param state Saved web view panel state with preview PRQL document Url.
