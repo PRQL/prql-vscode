@@ -11,7 +11,6 @@ import {
   workspace,
 } from 'vscode';
 
-import { isPrqlDocument } from './utils';
 import { SourceLocation, compile } from './compiler';
 
 function getRange(location: SourceLocation | null): Range {
@@ -29,7 +28,7 @@ function getRange(location: SourceLocation | null): Range {
 function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
   const editor = window.activeTextEditor;
 
-  if (editor && isPrqlDocument(editor)) {
+  if (editor && editor.document.languageId === 'prql') {
     const text = editor.document.getText();
     const result = compile(text);
 

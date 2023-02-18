@@ -24,7 +24,6 @@ import {
 } from './utils';
 
 import { ViewContext } from './viewContext';
-import { isPrqlDocument } from '../utils';
 import { compile } from '../compiler';
 import * as constants from '../constants';
 
@@ -277,7 +276,7 @@ export class SqlPreview {
   private sendText(context: ExtensionContext, panel: WebviewPanel) {
     const editor = window.activeTextEditor;
 
-    if (panel.visible && editor && isPrqlDocument(editor)) {
+    if (panel.visible && editor && editor.document.languageId === 'prql') {
       const text = editor.document.getText();
       this.compilePrql(text, this._lastSqlHtml).then((result) => {
         if (result.status === 'ok') {
