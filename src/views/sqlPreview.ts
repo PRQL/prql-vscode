@@ -7,7 +7,6 @@ import {
   ExtensionContext,
   TextDocument,
   TextDocumentChangeEvent,
-  TextEditor,
   ViewColumn,
   Webview,
   WebviewPanel,
@@ -38,15 +37,11 @@ export class SqlPreview {
 
   // view instance vars
   private readonly _webviewPanel: WebviewPanel;
-  private readonly _extensionUri: Uri;
   private readonly _documentUri: Uri;
   private readonly _viewUri: Uri;
 
-  private _viewConfig: any = {};
   private _disposables: Disposable[] = [];
-
   private _highlighter: shiki.Highlighter | undefined;
-  private _lastEditor: TextEditor | undefined = undefined;
   private _lastSqlHtml: string | undefined;
 
   /**
@@ -60,8 +55,7 @@ export class SqlPreview {
    * @param webviewPanel Optional webview panel instance.
    * @param viewConfig View config to restore.
    */
-  public static render(context: ExtensionContext, documentUri: Uri,
-    webviewPanel?: WebviewPanel, viewConfig?: any) {
+  public static render(context: ExtensionContext, documentUri: Uri, webviewPanel?: WebviewPanel) {
 
     // create view Uri
     const viewUri: Uri = documentUri.with({scheme: 'prql'});
@@ -93,7 +87,7 @@ export class SqlPreview {
       }
 
       // create and set as current sql preview
-      SqlPreview.currentView = new SqlPreview(context, webviewPanel, documentUri, viewConfig);
+      SqlPreview.currentView = new SqlPreview(context, webviewPanel, documentUri);
     }
 
     // update sql preview context values
@@ -136,25 +130,12 @@ export class SqlPreview {
    * @param context Extension context.
    * @param webviewPanel Reference to the webview panel.
    * @param documentUri PRQL document Uri.
-   * @param viewConfig Optional view config to restore.
    */
-  private constructor(context: ExtensionContext,
-    webviewPanel: WebviewPanel,
-    documentUri: Uri, viewConfig?: any) {
-
+  private constructor(context: ExtensionContext, webviewPanel: WebviewPanel, documentUri: Uri) {
     // save view context info
     this._webviewPanel = webviewPanel;
-    this._extensionUri = context.extensionUri;
     this._documentUri = documentUri;
     this._viewUri = documentUri.with({scheme: 'prql'});
-
-    if (viewConfig) {
-      // save view config to restore
-      this._viewConfig = viewConfig;
-    }
-    else {
-      this._viewConfig = {documentUrl: documentUri.fsPath};
-    }
 
     // configure webview panel
     this.configure(context);
@@ -196,8 +177,7 @@ export class SqlPreview {
     this._disposables.push(
       window.onDidChangeActiveTextEditor((editor) => {
         if (editor && editor.document.uri.fsPath === this.documentUri.fsPath) {
-          // reset PRQL editor reference and sql html output
-          this._lastEditor = editor;
+          // reset last sql html output
           this._lastSqlHtml = undefined;
 
           // clear sql preview context and recompile prql
