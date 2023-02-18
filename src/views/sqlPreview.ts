@@ -80,12 +80,6 @@ export class SqlPreview {
         };
       }
 
-      if (webviewPanel) {
-        // set custom sql preview panel icon
-        webviewPanel.iconPath = Uri.file(
-          path.join(context.extensionUri.fsPath, 'resources', 'favicon.ico'));
-      }
-
       // create and set as current sql preview
       SqlPreview.currentView = new SqlPreview(context, webviewPanel, documentUri);
     }
@@ -107,7 +101,7 @@ export class SqlPreview {
     const fileName = path.basename(documentUri.path, '.prql'); // strip out prql file ext.
 
     // create new sql preview webview panel
-    return window.createWebviewPanel(
+    const webviewPanel = window.createWebviewPanel(
       constants.SqlPreviewPanel, // webview panel view type
       `${constants.SqlPreviewTitle}: ${fileName}.sql`, // webview panel title
       {
@@ -122,6 +116,12 @@ export class SqlPreview {
         localResourceRoots: [Uri.joinPath(context.extensionUri, 'resources')],
       }
     );
+
+    // set custom sql preview panel icon
+    webviewPanel.iconPath = Uri.file(
+      path.join(context.extensionUri.fsPath, 'resources', 'prql-logo.png'));
+
+    return webviewPanel;
   }
 
   /**
