@@ -31,31 +31,26 @@ function initializeView() {
 
 // add view update handler
 window.addEventListener('message', (event) => {
-  const { status } = event.data;
-  const template = document.getElementById(`status-${status}`).content.cloneNode(true);
-
-  switch (status) {
-    case 'ok':
-      // show updated sql html
-      template.lastElementChild.innerHTML = event.data.html;
-      break;
-    case 'error':
-      const {
-        error: { message },
-        last_html: lastHtml,
-      } = event.data;
-
-      if (lastHtml) {
-        document.getElementById('last-html').innerHTML = lastHtml;
+  switch (event.data.command) {
+    case 'update':
+      // show updated sql preview content
+      const result = event.data.result;
+      if (result.status === 'ok') {
+        document.getElementById('result').innerHTML = result.sqlHtml;
+      }
+      else if (result.lastSqlHtml) {
+        document.getElementById('last-html').innerHTML = result.lastSqlHtml;
         document.getElementById('error-container').classList.add('error-container-fixed');
       }
 
-      if (message.length > 0) {
-        document.getElementById('error-message').innerHTML = message;
+      if (result.status === 'error' && result.error.message.length > 0) {
+        // show errors
+        document.getElementById('error-message').innerHTML = result.error.message;
         document.getElementById('error-container').style.display = 'block';
       }
+      // document.getElementById('result').replaceChildren(template);
       break;
-    case 'themeChanged':
+    case 'changeTheme':
       // content already in the template: do nothing ???
       break;
     case 'refresh':
@@ -64,8 +59,6 @@ window.addEventListener('message', (event) => {
     default:
       throw new Error('unknown message');
   }
-
-  document.getElementById('result').replaceChildren(template);
 });
 
 /**

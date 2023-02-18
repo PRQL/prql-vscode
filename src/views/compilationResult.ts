@@ -3,10 +3,10 @@
  */
 export interface CompilationResult {
   status: 'ok' | 'error';
-  html?: string;
   sql?: string;
+  sqlHtml?: string;
   error?: {
     message: string;
   };
-  lastHtml?: string | undefined;
+  lastSqlHtml?: string | undefined;
 }

@@ -42,7 +42,6 @@ export class SqlPreviewSerializer implements WebviewPanelSerializer {
    */
   async deserializeWebviewPanel(webviewPanel: WebviewPanel, state: any) {
     const documentUri: Uri = Uri.file(state.documentUrl);
-    console.debug(`prql: ${state.documentUrl}`);
     SqlPreview.render(this.context, documentUri, webviewPanel, state);
   }
 }
