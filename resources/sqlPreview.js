@@ -26,7 +26,7 @@ function initializeView() {
   }
 
   // request initial sql preview load
-  vscode.postMessage({ command: 'refresh' });
+  vscode.postMessage({command: 'refresh'});
 }
 
 // add view update handler
@@ -34,10 +34,9 @@ window.addEventListener('message', (event) => {
   const { status } = event.data;
   const template = document.getElementById(`status-${status}`).content.cloneNode(true);
 
-  const el = (name) => template.getElementById(name);
-
   switch (status) {
     case 'ok':
+      // show updated sql html
       template.lastElementChild.innerHTML = event.data.html;
       break;
     case 'error':
@@ -47,17 +46,17 @@ window.addEventListener('message', (event) => {
       } = event.data;
 
       if (lastHtml) {
-        el('last-html').innerHTML = lastHtml;
-        el('error-container').classList.add('error-container-fixed');
+        document.getElementById('last-html').innerHTML = lastHtml;
+        document.getElementById('error-container').classList.add('error-container-fixed');
       }
 
       if (message.length > 0) {
-        el('error-message').innerHTML = message;
-        el('error-container').style.display = 'block';
+        document.getElementById('error-message').innerHTML = message;
+        document.getElementById('error-container').style.display = 'block';
       }
       break;
-    case 'theme-changed':
-      // Content already in the template
+    case 'themeChanged':
+      // content already in the template: do nothing ???
       break;
     case 'refresh':
       updateViewState(event.data);
