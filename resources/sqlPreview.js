@@ -34,21 +34,7 @@ window.addEventListener('message', (event) => {
   switch (event.data.command) {
     case 'update':
       // show updated sql preview content
-      const result = event.data.result;
-      if (result.status === 'ok') {
-        document.getElementById('result').innerHTML = result.sqlHtml;
-      }
-      else if (result.lastSqlHtml) {
-        document.getElementById('last-html').innerHTML = result.lastSqlHtml;
-        document.getElementById('error-container').classList.add('error-container-fixed');
-      }
-
-      if (result.status === 'error' && result.error.message.length > 0) {
-        // show errors
-        document.getElementById('error-message').innerHTML = result.error.message;
-        document.getElementById('error-container').style.display = 'block';
-      }
-      // document.getElementById('result').replaceChildren(template);
+      update(event.data.result)
       break;
     case 'changeTheme':
       // content already in the template: do nothing ???
@@ -71,4 +57,29 @@ function updateViewState(prqlInfo) {
   documentUrl = prqlInfo.documentUrl;
   viewState.documentUrl = documentUrl;
   vscode.setState(viewState);
+}
+
+
+/**
+ * Displays updated sql html from compiled PRQL result.
+ *
+ * @param {*} compilationResult PRQL compilation result.
+ */
+function update(compilationResult) {
+  // show updated sql preview content
+  const result = compilationResult;
+  if (result.status === 'ok') {
+    document.getElementById('result').innerHTML = result.sqlHtml;
+  }
+  else if (result.lastSqlHtml) {
+    document.getElementById('last-html').innerHTML = result.lastSqlHtml;
+    document.getElementById('error-container').classList.add('error-container-fixed');
+  }
+
+  if (result.status === 'error' && result.error.message.length > 0) {
+    // show errors
+    document.getElementById('error-message').innerHTML = result.error.message;
+    document.getElementById('error-container').style.display = 'block';
+  }
+  // document.getElementById('result').replaceChildren(template);
 }
