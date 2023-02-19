@@ -42,7 +42,7 @@ export class SqlPreview {
 
   private _disposables: Disposable[] = [];
   private _highlighter: shiki.Highlighter | undefined;
-  private _lastSqlHtml: string | undefined;
+  private _lastCompilationResult: CompilationResult | undefined;
 
   /**
    * Reveals current Sql Preview webview
@@ -191,9 +191,6 @@ export class SqlPreview {
     this._disposables.push(
       window.onDidChangeActiveTextEditor((editor) => {
         if (editor && editor.document.uri.fsPath === this.documentUri.fsPath) {
-          // reset last sql html output
-          this._lastSqlHtml = undefined;
-
           // clear sql preview context and recompile prql
           // from the linked and active PRQL editor
           // for the webview's PRQL source document
@@ -206,8 +203,10 @@ export class SqlPreview {
     // add color theme change handler
     this._disposables.push(
       window.onDidChangeActiveColorTheme(() => {
+        // reset highlighter
         this._highlighter = undefined;
-        this._lastSqlHtml = undefined;
+
+        // notify webview
         webviewPanel.webview.postMessage({command: 'changeTheme'});
       })
     );
@@ -395,10 +394,12 @@ export class SqlPreview {
    * @param prqlCode PRQL code to process.
    */
   private async processPrql(context: ExtensionContext, prqlCode: string) {
-    this.compilePrql(prqlCode, this._lastSqlHtml).then((compilationResult) => {
+    this.compilePrql(prqlCode, this._lastCompilationResult?.lastSqlHtml).then((compilationResult) => {
       if (compilationResult.status === 'ok') {
-        // save last valid sql html output to show when errors occur later
-        this._lastSqlHtml = compilationResult.sqlHtml;
+        // save the last valid compilation result
+        // to show it when errors occur later,
+        // or on sql preview panel reveal
+        this._lastCompilationResult = compilationResult;
       }
 
       // update webview
