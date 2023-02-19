@@ -32,15 +32,31 @@ code {
   font-weight: var(--vscode-editor-font-weight) !important;
 }
 
+body {
+  margin: 0px;
+  padding: 10px;
+}
+
 h3 {
   margin: 10px 0 0 10px;
   color: var(--vscode-editorError-foreground);
 }
 
+.error {
+  padding: 0px;
+  margin: 0px;
+}
+
+#result {
+  margin: 0px;
+  padding: 0px;
+}
+
 #last-html {
   overflow-y: scroll;
   max-height: 80vh;
-  margin-top: 0px;
+  margin: 0px;
+  padding: 0px;
 }
 
 #error-container {
@@ -50,13 +66,13 @@ h3 {
 }
 
 .error-container-fixed {
-  left: 20px;
-  right: 20px;
+  left: 10px;
+  right: 10px;
   bottom: 0;
   position: fixed;
   border-top: 2px solid var(--vscode-editorError-foreground);
 }
 
 #error-message {
-  padding-left: 10px;
+  padding: 0px;
 }
