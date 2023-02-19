@@ -13,6 +13,7 @@ import * as constants from './constants';
 
 import { compile } from './compiler';
 import { TextEncoder } from 'util';
+import { SqlPreview } from './views/sqlPreview';
 
 /**
  * Registers PRQL extension commands.
@@ -23,12 +24,32 @@ export function registerCommands(context: ExtensionContext) {
   registerCommand(context, constants.GenerateSqlFile, generateSqlFile);
   registerCommand(context, constants.ViewSettings, viewPrqlSettings);
 
+  registerCommand(context, constants.OpenSqlPreview, (documentUri: Uri) => {
+    if (!documentUri && window.activeTextEditor) {
+      // use active text editor document Uri
+      documentUri = window.activeTextEditor.document.uri;
+    }
+
+    // render Sql Preview for the requested PRQL document
+    SqlPreview.render(context, documentUri);
+  });
+
   registerCommand(context, constants.CopySqlToClipboard, () => {
-    const sql: string | undefined = context.workspaceState.get('prql.sql');
-    if (sql) {
-      // write the last generated sql code to vscode clipboard
+
+    // get last generated prql sql content from workspace state
+    let sql: string | undefined = context.workspaceState.get('prql.sql');
+
+    let sqlFileName = 'SQL';
+    if (SqlPreview.currentView) {
+      // get sql filename and content fromn sql preview
+      sqlFileName = `prql://${path.basename(SqlPreview.currentView.documentUri.path, '.prql')}.sql`;
+      sql = SqlPreview.currentView.lastCompilationResult?.sql;
+    }
+
+    if (sql !== undefined) {
+      // write the last active sql preview sql code to vscode clipboard
       env.clipboard.writeText(sql);
-      window.showInformationMessage('PRQL: SQL copied to Clipboard.');
+      window.showInformationMessage(`Copied ${sqlFileName} to Clipboard.`);
     }
   });
 }
@@ -45,21 +66,21 @@ function registerCommand(
   context: ExtensionContext,
   commandId: string,
   callback: (...args: any[]) => any,
-  thisArg?: any
-): void {
+  thisArg?: any): void {
+
   const command: Disposable = commands.registerCommand(
     commandId,
     async (...args) => {
       try {
         await callback(...args);
-      } catch (e: unknown) {
+      }
+      catch (e: unknown) {
         window.showErrorMessage(String(e));
         console.error(e);
       }
     },
     thisArg
   );
-
   context.subscriptions.push(command);
 }
 
@@ -67,10 +88,7 @@ function registerCommand(
  * Opens vscode Settings panel with PRQL settings.
  */
 async function viewPrqlSettings() {
-  await commands.executeCommand(
-    constants.WorkbenchActionOpenSettings,
-    constants.ExtensionId
-  );
+  await commands.executeCommand(constants.WorkbenchActionOpenSettings, constants.ExtensionId);
 }
 
 /**
@@ -93,29 +111,22 @@ async function generateSqlFile() {
     if (Array.isArray(result)) {
       window.showErrorMessage(`PRQL Compile \
         ${result[0].display ?? result[0].reason}`);
-    } else {
+    }
+    else {
       const prqlDocumentUri: Uri = editor.document.uri;
       const prqlFilePath = path.parse(prqlDocumentUri.fsPath);
       const prqlSettings = workspace.getConfiguration('prql');
       const target = <string>prqlSettings.get('target');
-      const addTargetDialectToSqlFilenames = <boolean>(
-        prqlSettings.get(constants.AddTargetDialectToSqlFilenames)
-      );
+      const addTargetDialectToSqlFilenames =
+        <boolean>prqlSettings.get(constants.AddTargetDialectToSqlFilenames);
 
       let sqlFilenameSuffix = '';
-      if (
-        addTargetDialectToSqlFilenames &&
-        target !== 'Generic' &&
-        target !== 'None'
-      ) {
+      if (addTargetDialectToSqlFilenames && target !== 'Generic' && target !== 'None') {
         sqlFilenameSuffix = `.${target.toLowerCase()}`;
       }
 
       // create sql filename based on prql file path, name, and current settings
-      const sqlFilePath = path.join(
-        prqlFilePath.dir,
-        `${prqlFilePath.name}${sqlFilenameSuffix}.sql`
-      );
+      const sqlFilePath = path.join(prqlFilePath.dir, `${prqlFilePath.name}${sqlFilenameSuffix}.sql`);
 
       // create sql file
       const sqlFileUri: Uri = Uri.file(sqlFilePath);

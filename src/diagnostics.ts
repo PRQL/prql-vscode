@@ -11,7 +11,6 @@ import {
   workspace,
 } from 'vscode';
 
-import { isPrqlDocument } from './utils';
 import { SourceLocation, compile } from './compiler';
 
 function getRange(location: SourceLocation | null): Range {
@@ -23,26 +22,27 @@ function getRange(location: SourceLocation | null): Range {
       location.end[1]
     );
   }
-
   return new Range(new Position(0, 0), new Position(0, 0));
 }
 
 function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
   const editor = window.activeTextEditor;
 
-  if (editor && isPrqlDocument(editor)) {
+  if (editor && editor.document.languageId === 'prql') {
     const text = editor.document.getText();
     const result = compile(text);
 
     if (!Array.isArray(result)) {
       diagnosticCollection.set(editor.document.uri, []);
-    } else {
+    }
+    else {
       const range = getRange(result[0].location);
       const diagnostic = new Diagnostic(
         range,
         result[0].reason ?? 'Syntax Error',
         DiagnosticSeverity.Error
       );
+
       diagnosticCollection.set(editor.document.uri, [diagnostic]);
     }
   }
