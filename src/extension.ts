@@ -27,8 +27,11 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(
     window.onDidChangeActiveTextEditor((editor) => {
       if (editor && editor.document.languageId === 'prql') {
-        // reveal teh corresponding sql preview, if already open
+        // reveal the corresponding sql preview, if already open
         SqlPreview.reveal(context, editor.document.uri);
+      }
+      else {
+        SqlPreview.clearActiveSqlPreivewContext(context);
       }
     })
   );

@@ -101,14 +101,22 @@ export class SqlPreview {
       return sqlPreview;
     }
     else {
-      // clear active sql preview, context values and prql.sql in workspace state
-      SqlPreview.currentView = undefined;
-      commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
-      commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, undefined);
-      context.workspaceState.update('prql.sql', undefined);
+      SqlPreview.clearActiveSqlPreivewContext(context);
     }
 
     return undefined;
+  }
+
+  /**
+   * clears active sql preview, context values and prql.sql in workspace state.
+   *
+   * @param context Extension context.
+   */
+  public static clearActiveSqlPreivewContext(context: ExtensionContext) {
+    SqlPreview.currentView = undefined;
+    commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
+    commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, undefined);
+    context.workspaceState.update('prql.sql', undefined);
   }
 
   /**
