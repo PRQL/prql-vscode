@@ -26,7 +26,7 @@ export function activate(context: ExtensionContext) {
   // add active text editor change handler
   context.subscriptions.push(
     window.onDidChangeActiveTextEditor((editor) => {
-      if (editor && editor.document.uri.fsPath.endsWith('.prql')) {
+      if (editor && editor.document.languageId === 'prql') {
         // reveal teh corresponding sql preview, if already open
         SqlPreview.reveal(context, editor.document.uri);
       }

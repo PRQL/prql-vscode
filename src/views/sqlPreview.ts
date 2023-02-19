@@ -60,7 +60,7 @@ export class SqlPreview {
     // attempt to reveal an open sql preview
     const sqlPreview: SqlPreview | undefined = SqlPreview.reveal(context, documentUri);
 
-    if (!sqlPreview) {
+    if (sqlPreview === undefined) {
       if (!webviewPanel) {
         // create new webview panel for the prql document sql preview
         webviewPanel = SqlPreview.createWebviewPanel(context, documentUri);
@@ -94,14 +94,17 @@ export class SqlPreview {
     // get an open sql preview
     const sqlPreview: SqlPreview | undefined = SqlPreview._views.get(viewUri.toString(true)); // skip encoding
 
-    if (sqlPreview) {
+    if (sqlPreview !== undefined) {
       // show loaded webview panel
       sqlPreview.reveal(context);
       SqlPreview.currentView = sqlPreview;
       return sqlPreview;
     }
     else {
-      // clear active sql preview prql.sql in workspace state
+      // clear active sql preview, context values and prql.sql in workspace state
+      SqlPreview.currentView = undefined;
+      commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
+      commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, undefined);
       context.workspaceState.update('prql.sql', undefined);
     }
 
@@ -282,10 +285,9 @@ export class SqlPreview {
 
     let prqlCode = undefined;
     if (fs.existsSync(this.documentUri.fsPath) &&
-      this.documentUri.fsPath.endsWith('.prql')) {
+        this.documentUri.fsPath.endsWith('.prql')) {
 
       // load initial prql code from file
-      console.log(this.documentUri.fsPath);
       const prqlContent: Uint8Array = await workspace.fs.readFile(
         Uri.file(this.documentUri.fsPath));
 
