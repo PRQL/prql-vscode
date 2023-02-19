@@ -28,7 +28,7 @@ export function activate(context: ExtensionContext) {
     window.onDidChangeActiveTextEditor((editor) => {
       if (editor && editor.document.uri.fsPath.endsWith('.prql')) {
         // reveal teh corresponding sql preview, if already open
-        SqlPreview.reveal(editor.document.uri);
+        SqlPreview.reveal(context, editor.document.uri);
       }
     })
   );

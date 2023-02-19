@@ -58,7 +58,7 @@ export class SqlPreview {
   public static render(context: ExtensionContext, documentUri: Uri, webviewPanel?: WebviewPanel) {
 
     // attempt to reveal an open sql preview
-    const sqlPreview: SqlPreview | undefined = SqlPreview.reveal(documentUri);
+    const sqlPreview: SqlPreview | undefined = SqlPreview.reveal(context, documentUri);
 
     if (!sqlPreview) {
       if (!webviewPanel) {
@@ -77,27 +77,32 @@ export class SqlPreview {
       SqlPreview.currentView = new SqlPreview(context, webviewPanel, documentUri);
     }
 
-    // update active sql preview context values
-    sqlPreview?.resetSqlPreviewContext();
+    sqlPreview?.updateActiveSqlPreviewContext(context);
   }
 
   /**
    * Reveals an open Sql Preview for a given PRQL document URI.
    *
+   * @param context Extension context.
    * @param documentUri PRQL document Uri.
    * @returns The corresponding open Sql Preview for a PRQL document URI, or undefined.
    */
-  public static reveal(documentUri: Uri): SqlPreview | undefined {
+  public static reveal(context: ExtensionContext, documentUri: Uri): SqlPreview | undefined {
     // create view Uri
     const viewUri: Uri = documentUri.with({scheme: 'prql'});
 
-    // check for an open sql preview
+    // get an open sql preview
     const sqlPreview: SqlPreview | undefined = SqlPreview._views.get(viewUri.toString(true)); // skip encoding
+
     if (sqlPreview) {
       // show loaded webview panel
-      sqlPreview.reveal();
+      sqlPreview.reveal(context);
       SqlPreview.currentView = sqlPreview;
       return sqlPreview;
+    }
+    else {
+      // clear active sql preview prql.sql in workspace state
+      context.workspaceState.update('prql.sql', undefined);
     }
 
     return undefined;
@@ -244,13 +249,13 @@ export class SqlPreview {
 
   /**
     * Reveals loaded Sql Preview and sets it as active in vscode editor panel.
+    *
+    * @param context Extension context.
     */
-  public reveal() {
+  public reveal(context: ExtensionContext) {
     const viewColumn: ViewColumn = ViewColumn.Active ? ViewColumn.Active : ViewColumn.One;
     this.webviewPanel.reveal(viewColumn, true); // preserve current active editor focus
-
-    // update active sql preview context values
-    this.resetSqlPreviewContext();
+    this.updateActiveSqlPreviewContext(context);
   }
 
   /**
@@ -263,7 +268,6 @@ export class SqlPreview {
   private async configure(context: ExtensionContext) {
     // set view html content for the webview panel
     this.webviewPanel.webview.html = this.getHtmlTemplate(context, this.webviewPanel.webview);
-    // this.getWebviewContent(this.webviewPanel.webview, this._extensionUri, viewConfig);
 
     // process webview messages
     this.webviewPanel.webview.onDidReceiveMessage((message: any) => {
@@ -360,21 +364,18 @@ export class SqlPreview {
     else if (prqlCode) {
       this.processPrql(context, prqlCode);
     }
-
-    if (!this.webviewPanel.visible || !this.webviewPanel.active) {
-      this.clearSqlPreviewContext(context);
-    }
   }
 
   /**
-   * Resets current/active SQL Preview context and view state.
+   * Updates current/active SQL Preview context and view state.
    *
    * @param context Extension context.
    */
-  private async resetSqlPreviewContext() {
+  private async updateActiveSqlPreviewContext(context: ExtensionContext) {
     commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
-    commands.executeCommand('setContext',
-      ViewContext.LastActivePrqlDocumentUri, this.documentUri);
+    commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, this.documentUri);
+    // update active sql preview sql text in workspace state
+    context.workspaceState.update('prql.sql', this._lastCompilationResult?.sql);
   }
 
   /**
@@ -408,9 +409,7 @@ export class SqlPreview {
         result: compilationResult
       });
 
-      // reset active sql preview context and update last sql in workspace state
-      this.resetSqlPreviewContext();
-      context.workspaceState.update('prql.sql', compilationResult.sql);
+      this.updateActiveSqlPreviewContext(context);
     });
   }
 
@@ -480,6 +479,13 @@ export class SqlPreview {
     // Does it use the loaded vscode CSS vars
     // when no color theme is set?
     return 'css-variables';
+  }
+
+  /**
+   * Gets the last valid compilation result for this sql preview.
+   */
+  get lastCompilationResult(): CompilationResult | undefined {
+    return this._lastCompilationResult;
   }
 
   /**
