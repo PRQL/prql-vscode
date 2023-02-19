@@ -103,7 +103,7 @@ export class SqlPreview {
     // create new sql preview webview panel
     const webviewPanel = window.createWebviewPanel(
       constants.SqlPreviewPanel, // webview panel view type
-      `${constants.SqlPreviewTitle}: ${fileName}.sql`, // webview panel title
+      `${fileName}.sql`, // webview panel title
       {
         viewColumn: ViewColumn.Beside, // display it on the side
         preserveFocus: true
