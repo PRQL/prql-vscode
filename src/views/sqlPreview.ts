@@ -101,7 +101,7 @@ export class SqlPreview {
       return sqlPreview;
     }
     else {
-      SqlPreview.clearActiveSqlPreivewContext(context);
+      SqlPreview.clearActiveSqlPreviewContext(context);
     }
 
     return undefined;
@@ -112,7 +112,7 @@ export class SqlPreview {
    *
    * @param context Extension context.
    */
-  public static clearActiveSqlPreivewContext(context: ExtensionContext) {
+  public static clearActiveSqlPreviewContext(context: ExtensionContext) {
     SqlPreview.currentView = undefined;
     commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
     commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, undefined);
@@ -342,7 +342,7 @@ export class SqlPreview {
   }
 
   /**
-    * Reloads Sql Preivew for the active PRQL document Uri or on vscode IDE realod.
+    * Reloads Sql Preview for the active PRQL document Uri or on vscode IDE realod.
     */
   public async refresh(): Promise<void> {
     // update view state
@@ -437,7 +437,7 @@ export class SqlPreview {
     // compile given prql code
     const sqlCode = compile(prqlCode);
     if (Array.isArray(sqlCode)) {
-      // return last valid sql html ouput with new error info
+      // return last valid sql html output with new error info
       return {
         status: 'error',
         error: {

@@ -31,7 +31,7 @@ export function activate(context: ExtensionContext) {
         SqlPreview.reveal(context, editor.document.uri);
       }
       else {
-        SqlPreview.clearActiveSqlPreivewContext(context);
+        SqlPreview.clearActiveSqlPreviewContext(context);
       }
     })
   );
