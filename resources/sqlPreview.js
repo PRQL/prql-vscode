@@ -68,6 +68,7 @@ function updateViewState(prqlInfo) {
 function update(compilationResult) {
   // show updated sql preview content
   const result = compilationResult;
+  const errorContainer = document.getElementById('error-container');
   if (result.status === 'ok') {
     document.getElementById('result').innerHTML = result.sqlHtml;
   }
@@ -79,7 +80,9 @@ function update(compilationResult) {
   if (result.status === 'error' && result.error.message.length > 0) {
     // show errors
     document.getElementById('error-message').innerHTML = result.error.message;
-    document.getElementById('error-container').style.display = 'block';
+    errorContainer.style.display = 'block';
   }
-  // document.getElementById('result').replaceChildren(template);
+  else {
+    errorContainer.style.display = 'none';
+  }
 }

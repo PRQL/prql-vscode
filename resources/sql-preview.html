@@ -11,22 +11,8 @@
     />
     <link href="##CSS_URI##" rel="stylesheet" />
     <script src="##JS_URI##" type="application/javascript"></script>
-    <title>PRQL SQL Output Panel</title>
+    <title>PRQL SQL Preview</title>
   </head>
-
-  <template id="status-ok">
-    <div id="sql-code"></div>
-  </template>
-
-  <template id="status-error">
-    <div class="error-inner">
-      <pre id="last-html"></pre>
-      <div id="error-container">
-        <h3>Syntax error!</h3>
-        <pre id="error-message"></pre>
-      </div>
-    </div>
-  </template>
 
   <template id="status-theme-changed">
     <span>Theme has changed. Waiting for a PRQL file...</span>
@@ -34,5 +20,11 @@
 
   <body>
     <div id="result">Waiting for a PRQL file...</div>
+    <div class="error-inner">
+      <pre id="last-html"></pre>
+      <div id="error-container">
+        <pre id="error-message"></pre>
+      </div>
+    </div>
   </body>
 </html>
