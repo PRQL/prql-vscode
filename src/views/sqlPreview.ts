@@ -57,17 +57,10 @@ export class SqlPreview {
    */
   public static render(context: ExtensionContext, documentUri: Uri, webviewPanel?: WebviewPanel) {
 
-    // create view Uri
-    const viewUri: Uri = documentUri.with({scheme: 'prql'});
+    // attempt to reveal an open sql preview
+    const sqlPreview: SqlPreview | undefined = SqlPreview.reveal(documentUri);
 
-    // check for an open sql preview
-    const sqlPreview: SqlPreview | undefined = SqlPreview._views.get(viewUri.toString(true)); // skip encoding
-    if (sqlPreview) {
-      // show loaded webview panel
-      sqlPreview.reveal();
-      SqlPreview.currentView = sqlPreview;
-    }
-    else {
+    if (!sqlPreview) {
       if (!webviewPanel) {
         // create new webview panel for the prql document sql preview
         webviewPanel = SqlPreview.createWebviewPanel(context, documentUri);
@@ -80,13 +73,34 @@ export class SqlPreview {
         };
       }
 
-      // create and set as current sql preview
+      // create new sql peview and set it as current view
       SqlPreview.currentView = new SqlPreview(context, webviewPanel, documentUri);
     }
 
-    // update sql preview context values
-    commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
-    commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, documentUri);
+    // update active sql preview context values
+    sqlPreview?.resetSqlPreviewContext();
+  }
+
+  /**
+   * Reveals an open Sql Preview for a given PRQL document URI.
+   *
+   * @param documentUri PRQL document Uri.
+   * @returns The corresponding open Sql Preview for a PRQL document URI, or undefined.
+   */
+  public static reveal(documentUri: Uri): SqlPreview | undefined {
+    // create view Uri
+    const viewUri: Uri = documentUri.with({scheme: 'prql'});
+
+    // check for an open sql preview
+    const sqlPreview: SqlPreview | undefined = SqlPreview._views.get(viewUri.toString(true)); // skip encoding
+    if (sqlPreview) {
+      // show loaded webview panel
+      sqlPreview.reveal();
+      SqlPreview.currentView = sqlPreview;
+      return sqlPreview;
+    }
+
+    return undefined;
   }
 
   /**
@@ -234,7 +248,7 @@ export class SqlPreview {
     */
   public reveal() {
     const viewColumn: ViewColumn = ViewColumn.Active ? ViewColumn.Active : ViewColumn.One;
-    this.webviewPanel.reveal(viewColumn);
+    this.webviewPanel.reveal(viewColumn, true); // preserve current active editor focus
 
     // update active sql preview context values
     this.resetSqlPreviewContext();
@@ -279,6 +293,39 @@ export class SqlPreview {
     // update webview
     this.refresh();
     this.update(context, prqlCode);
+  }
+
+
+  /**
+   * Loads and creates html template for Sql Preview webview.
+   *
+   * @param context Extension context.
+   * @param webview Sql Preview webview.
+   * @returns Html template to use for Sql Preview webview.
+   */
+  private getHtmlTemplate(context: ExtensionContext, webview: Webview): string {
+    // load webview html template, stylesheet and sql preview script
+    const htmlTemplate = readFileSync(
+      this.getResourceUri(context, 'sql-preview.html').fsPath, 'utf-8');
+    const stylesheetUri: Uri = this.getResourceUri(context, 'sql-preview.css');
+    const scriptUri: Uri = this.getResourceUri(context, 'sqlPreview.js');
+
+    // inject webview resource urls into the loaded webview html template,
+    // add webview CSP source, and convert css and js Uris to webview resource Uris
+    return htmlTemplate.replace(/##CSP_SOURCE##/g, webview.cspSource)
+      .replace('##CSS_URI##', webview.asWebviewUri(stylesheetUri).toString())
+      .replace('##JS_URI##', webview.asWebviewUri(scriptUri).toString());
+  }
+
+  /**
+   * Gets webview resource Uri from extension directory.
+   *
+   * @param context Extension context.
+   * @param filename Resource filename to create resource Uri.
+   * @returns Webview resource Uri.
+   */
+  private getResourceUri(context: ExtensionContext, fileName: string) {
+    return Uri.joinPath(context.extensionUri, 'resources', fileName);
   }
 
   /**
@@ -460,36 +507,5 @@ export class SqlPreview {
    */
   get viewUri(): Uri {
     return this._viewUri;
-  }
-
-  /**
-   * Loads and creates html template for Sql Preview webview.
-   *
-   * @param context Extension context.
-   * @param webview Sql Preview webview.
-   * @returns Html template to use for Sql Preview webview.
-   */
-  private getHtmlTemplate(context: ExtensionContext, webview: Webview): string {
-    // load webview html template, sql preview script and stylesheet
-    const htmlTemplate = readFileSync(
-      this.getResourceUri(context, 'sql-preview.html').fsPath, 'utf-8');
-    const sqlPreviewScriptUri: Uri = this.getResourceUri(context, 'sqlPreview.js');
-    const sqlPreviewStylesheetUri: Uri = this.getResourceUri(context, 'sql-preview.css');
-
-    // inject webview resource urls into the loaded webview html template
-    return htmlTemplate.replace(/##CSP_SOURCE##/g, webview.cspSource)
-      .replace('##JS_URI##', webview.asWebviewUri(sqlPreviewScriptUri).toString())
-      .replace('##CSS_URI##', webview.asWebviewUri(sqlPreviewStylesheetUri).toString());
-  }
-
-  /**
-   * Gets webview resource Uri from extension directory.
-   *
-   * @param context Extension context.
-   * @param filename Resource filename to create resource Uri.
-   * @returns Webview resource Uri.
-   */
-  private getResourceUri(context: ExtensionContext, fileName: string) {
-    return Uri.joinPath(context.extensionUri, 'resources', fileName);
   }
 }
