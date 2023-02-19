@@ -35,11 +35,21 @@ export function registerCommands(context: ExtensionContext) {
   });
 
   registerCommand(context, constants.CopySqlToClipboard, () => {
-    const sql: string | undefined = context.workspaceState.get('prql.sql');
-    if (sql) {
-      // write the last generated sql code to vscode clipboard
+
+    // get last generated prql sql content from workspace state
+    let sql: string | undefined = context.workspaceState.get('prql.sql');
+
+    let sqlFileName = 'SQL';
+    if (SqlPreview.currentView) {
+      // get sql filename and content fromn sql preview
+      sqlFileName = `prql://${path.basename(SqlPreview.currentView.documentUri.path, '.prql')}.sql`;
+      sql = SqlPreview.currentView.lastCompilationResult?.sql;
+    }
+
+    if (sql !== undefined) {
+      // write the last active sql preview sql code to vscode clipboard
       env.clipboard.writeText(sql);
-      window.showInformationMessage('PRQL: SQL copied to Clipboard.');
+      window.showInformationMessage(`Copied ${sqlFileName} to Clipboard.`);
     }
   });
 }
