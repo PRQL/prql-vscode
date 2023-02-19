@@ -15,8 +15,13 @@ export function compile(prqlString: string): string | ErrorMessage[] {
 
   // create compile options from prql workspace settings
   const compileOptions = new prql.CompileOptions();
-  compileOptions.target = `sql.${target.toLowerCase()}`;
   compileOptions.signature_comment = addCompilerInfo;
+  if (target !== 'None') {
+    compileOptions.target = `sql.${target.toLowerCase()}`;
+  }
+  else {
+    compileOptions.target = 'sql.not_existing';
+  }
 
   try {
     // run prql compile
