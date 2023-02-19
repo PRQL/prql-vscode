@@ -37,7 +37,8 @@ window.addEventListener('message', (event) => {
       update(event.data.result)
       break;
     case 'changeTheme':
-      // content already in the template: do nothing ???
+      // do nothing: this webview html is UI theme neutral,
+      // and will update sql html content on the next edit
       break;
     case 'refresh':
       updateViewState(event.data);
@@ -83,6 +84,7 @@ function update(compilationResult) {
     errorContainer.style.display = 'block';
   }
   else {
+    // hide error container
     errorContainer.style.display = 'none';
   }
 }
