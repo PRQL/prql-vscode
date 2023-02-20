@@ -83,25 +83,25 @@
     "menus": {
       "explorer/context": [
         {
-          "when": "resourceLangId == prql",
           "command": "prql.openSqlPreview",
+          "when": "resourceLangId == prql",
           "group": "prql"
         }
       ],
       "editor/title": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /\\.prql$/",
+          "when": "resourceLangId == prql",
           "group": "navigation"
         },
         {
           "command": "prql.generateSqlFile",
-          "when": "resourceFilename =~ /\\.prql$/",
+          "when": "resourceLangId == prql",
           "group": "navigation"
         },
         {
           "command": "prql.viewSettings",
-          "when": "resourceFilename =~ /\\.prql$/",
+          "when": "resourceLangId == prql",
           "group": "navigation"
         },
         {
@@ -113,13 +113,13 @@
       "editor/title/context": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /\\.prql$/",
-          "group": "navigation"
+          "when": "resourceLangId == prql",
+          "group": "prql"
         },
         {
           "command": "prql.generateSqlFile",
-          "when": "resourceFilename =~ /\\.prql$/",
-          "group": "navigation"
+          "when": "resourceLangId == prql",
+          "group": "prql"
         }
       ]
     },
