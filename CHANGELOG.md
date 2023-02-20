@@ -36,7 +36,7 @@
   ([#116](https://github.com/PRQL/prql-vscode/issues/116))
 - Add PRQL Settings menu to PRQL text editor/title/context menus
   ([#117](https://github.com/PRQL/prql-vscode/issues/117))
-- Updated CHANGELOG.md for the v0.6.0 release
+- Update CHANGELOG.md for the v0.6.0 release
   ([#120](https://github.com/PRQL/prql-vscode/issues/120))
 
 ## 0.5.0
