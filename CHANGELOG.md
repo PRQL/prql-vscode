@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.6.0
+
+- Refactor SQL Preview webview implementation
+  ([#60](https://github.com/PRQL/prql-vscode/issues/60))
+- Add VSCode marketplace badges to README.md
+  ([#87](https://github.com/PRQL/prql-vscode/issues/87))
+- Add PRQL Settings shortcut menu button to SQL Preview and PRQL Editor titlebar
+  ([#90](https://github.com/PRQL/prql-vscode/issues/90))
+- Remove prql-example.png from /resources
+  ([#91](https://github.com/PRQL/prql-vscode/issues/91))
+- Add PRQL compiler signature comment boolean setting to extension config
+  ([#94](https://github.com/PRQL/prql-vscode/issues/94))
+- Document new PRQL Settings under Configuration section in README.md
+  ([#97](https://github.com/PRQL/prql-vscode/issues/97))
+- Change prql.target extension setting default to Generic and add None option
+  ([#98](https://github.com/PRQL/prql-vscode/issues/98))
+- Set PRQL Settings order to show Target setting first
+  ([#99](https://github.com/PRQL/prql-vscode/issues/99))
+- Implement SQL Preview webview deserialize to show it after VSCode reload
+  ([#102](https://github.com/PRQL/prql-vscode/issues/102))
+- Add boolean prql.addTargetDialectToSqlFilenames setting for the generated SQL filenames
+  ([#103](https://github.com/PRQL/prql-vscode/issues/103))
+- Create and use separate SQL Preview webview for multiple open PRQL documents
+  ([#108](https://github.com/PRQL/prql-vscode/issues/108))
+- Display virtual sql filename in clipboard copy notification message
+  ([#109](https://github.com/PRQL/prql-vscode/issues/109))
+- Document new Sql Preview update release v0.6.0 features
+  ([#111](https://github.com/PRQL/prql-vscode/issues/111))
+- Allow to open Sql Preview for a .prql file from a menu in built-in vscode file explorer
+  ([#113](https://github.com/PRQL/prql-vscode/issues/113))
+- Allow to generate SQL file from a PRQL document in vscode file explorer
+  ([#115](https://github.com/PRQL/prql-vscode/issues/115))
+- Add Copy Sql to Clipboard menu option to PRQL editor and Sql Preview editor/title/context menus
+  ([#116](https://github.com/PRQL/prql-vscode/issues/116))
+- Add PRQL Settings menu to PRQL text editor/title/context menus
+  ([#117](https://github.com/PRQL/prql-vscode/issues/117))
+- Updated CHANGELOG.md for the v0.6.0 release
+  ([#120](https://github.com/PRQL/prql-vscode/issues/120))
+
 ## 0.5.0
 
 - Use PRQL logo icon for `.prql` file extensions and display in file explorer
@@ -16,8 +55,14 @@
   ([#55](https://github.com/PRQL/prql-vscode/issues/55))
 - Update prql-js to v0.5.0 and use new CompileOptions for the target
   ([#65](https://github.com/PRQL/prql-vscode/issues/65))
+- Update CHANGELOG.md for v0.5.0 release
+  ([#68](https://github.com/PRQL/prql-vscode/issues/68))
 - Add PRQL extension to Data Science and Fromatters categories
   ([#70](https://github.com/PRQL/prql-vscode/issues/70))
+- Create and use new docs/images folder for extension features images in docs
+  ([#72](https://github.com/PRQL/prql-vscode/issues/72))
+- Update README.md with new features and settings in 0.5.0 version release
+  ([#76](https://github.com/PRQL/prql-vscode/issues/76))
 
 ## 0.4.2
 
