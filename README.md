@@ -16,11 +16,12 @@ This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
 ## Features
 
 - [PRQL](https://prql-lang.org/) language support and syntax highlighting
-- SQL Preview with Problems diagnostics and PRQL errors display updated on every keystroke as you type PRQL
+- SQL Previews with Problems diagnostics and PRQL errors display updated on every keystroke as you type PRQL
 - Dedicated SQL Previews linked to open PRQL documents in VSCode editor
-- Copy SQL from Preview to VSCode Clipboard context menu shortcuts in webview and PRQL editor
+- Restore open SQL Previews on VSCode reload
+- Copy SQL from an open SQL Preview to VSCode Clipboard
 - Generate SQL File PRQL editor context menu shortcut
-- View PRQL Settings PRQL editor context menu shortcut
+- View PRQL Settings editor context menu shortcut
 - PRQL compile target setting for the generated SQL dialect
 - Multi-target SQL generation and file naming options
 - Optional PRQL compiler signature comment append in generated SQL
