@@ -8,12 +8,13 @@ import {
   Uri,
 } from 'vscode';
 
+import * as fs from 'fs';
 import * as path from 'path';
-import * as constants from './constants';
 
-import { compile } from './compiler';
-import { TextEncoder } from 'util';
 import { SqlPreview } from './views/sqlPreview';
+import { TextEncoder } from 'util';
+import { compile } from './compiler';
+import * as constants from './constants';
 
 /**
  * Registers PRQL extension commands.
@@ -21,8 +22,24 @@ import { SqlPreview } from './views/sqlPreview';
  * @param context Extension context.
  */
 export function registerCommands(context: ExtensionContext) {
-  registerCommand(context, constants.GenerateSqlFile, generateSqlFile);
+
   registerCommand(context, constants.ViewSettings, viewPrqlSettings);
+
+  registerCommand(context, constants.GenerateSqlFile, (documentUri: Uri) => {
+
+    const editor = window.activeTextEditor;
+    if (!documentUri && editor && editor.document.languageId === 'prql') {
+      // use prql from the active prql text editor
+      generateSqlFile(editor.document.uri, editor.document.getText());
+    }
+    else if (documentUri &&
+      fs.existsSync(documentUri.fsPath) &&
+      documentUri.fsPath.endsWith('.prql')) {
+      // load prql code from the local prql file
+      const prqlCode: string = fs.readFileSync(documentUri.fsPath, 'utf8');
+      generateSqlFile(documentUri, prqlCode);
+    }
+  });
 
   registerCommand(context, constants.OpenSqlPreview, (documentUri: Uri) => {
     if (!documentUri && window.activeTextEditor) {
@@ -92,50 +109,48 @@ async function viewPrqlSettings() {
 }
 
 /**
- * Compiles PRQL text from the active text editor,
- * and creates or updates the corresponding SQL file
- * with PRQL compiler output.
+ * Compiles PRQL text for the given PRQL document uri, and creates
+ * or updates the corresponding SQL file with PRQL compiler output.
  *
  * Opens generated SQL file in text editor for code formatting,
  * or running generated SQL statements with available
  * vscode database extensions and sql tools.
+ *
+ * @param prqlDocumentUri PRQL source document Uri.
+ * @param prqlCode PRQL source code.
  */
-async function generateSqlFile() {
-  const editor = window.activeTextEditor;
+async function generateSqlFile(prqlDocumentUri: Uri, prqlCode: string) {
 
-  if (editor && editor.document.languageId === 'prql') {
-    // compile PRQL
-    const prql = editor.document.getText();
-    const result = compile(prql);
+  // compile given prql source code
+  const sqlCode = compile(prqlCode);
 
-    if (Array.isArray(result)) {
-      window.showErrorMessage(`PRQL Compile \
-        ${result[0].display ?? result[0].reason}`);
+  if (Array.isArray(sqlCode)) {
+    // display prql compilation errors
+    window.showErrorMessage(`PRQL Compile \
+      ${sqlCode[0].display ?? sqlCode[0].reason}`);
+  }
+  else {
+    // get sql file generation prql settings
+    const prqlSettings = workspace.getConfiguration('prql');
+    const target = <string>prqlSettings.get('target');
+    const addTargetDialectToSqlFilenames =
+      <boolean>prqlSettings.get(constants.AddTargetDialectToSqlFilenames);
+
+    // create sql filename based on prql file path, name, and current settings
+    const prqlFilePath = path.parse(prqlDocumentUri.fsPath);
+    let sqlFilenameSuffix = '';
+    if (addTargetDialectToSqlFilenames && target !== 'Generic' && target !== 'None') {
+      sqlFilenameSuffix = `.${target.toLowerCase()}`;
     }
-    else {
-      const prqlDocumentUri: Uri = editor.document.uri;
-      const prqlFilePath = path.parse(prqlDocumentUri.fsPath);
-      const prqlSettings = workspace.getConfiguration('prql');
-      const target = <string>prqlSettings.get('target');
-      const addTargetDialectToSqlFilenames =
-        <boolean>prqlSettings.get(constants.AddTargetDialectToSqlFilenames);
+    const sqlFilePath = path.join(prqlFilePath.dir, `${prqlFilePath.name}${sqlFilenameSuffix}.sql`);
 
-      let sqlFilenameSuffix = '';
-      if (addTargetDialectToSqlFilenames && target !== 'Generic' && target !== 'None') {
-        sqlFilenameSuffix = `.${target.toLowerCase()}`;
-      }
+    // create sql file
+    const sqlFileUri: Uri = Uri.file(sqlFilePath);
+    const textEncoder: TextEncoder = new TextEncoder();
+    const sqlContent: Uint8Array = textEncoder.encode(sqlCode);
+    await workspace.fs.writeFile(sqlFileUri, sqlContent);
 
-      // create sql filename based on prql file path, name, and current settings
-      const sqlFilePath = path.join(prqlFilePath.dir, `${prqlFilePath.name}${sqlFilenameSuffix}.sql`);
-
-      // create sql file
-      const sqlFileUri: Uri = Uri.file(sqlFilePath);
-      const textEncoder: TextEncoder = new TextEncoder();
-      const sqlContent: Uint8Array = textEncoder.encode(result);
-      await workspace.fs.writeFile(sqlFileUri, sqlContent);
-
-      // show generated sql file
-      await window.showTextDocument(sqlFileUri);
-    }
+    // show generated sql file
+    await window.showTextDocument(sqlFileUri);
   }
 }

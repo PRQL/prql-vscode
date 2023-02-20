@@ -75,44 +75,66 @@
       },
       {
         "command": "prql.viewSettings",
-        "title": "Settings",
+        "title": "View PRQL Settings",
         "category": "PRQL",
         "icon": "$(gear)"
       }
     ],
     "menus": {
+      "explorer/context": [
+        {
+          "command": "prql.openSqlPreview",
+          "when": "resourceLangId == prql",
+          "group": "prql"
+        },
+        {
+          "command": "prql.generateSqlFile",
+          "when": "resourceLangId == prql",
+          "group": "prql"
+        }
+      ],
       "editor/title": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /\\.prql$/",
+          "when": "resourceLangId == prql",
           "group": "navigation"
         },
         {
           "command": "prql.generateSqlFile",
-          "when": "resourceFilename =~ /\\.prql$/",
+          "when": "resourceLangId == prql",
           "group": "navigation"
         },
         {
           "command": "prql.viewSettings",
-          "when": "resourceFilename =~ /\\.prql$/",
+          "when": "resourceLangId == prql",
           "group": "navigation"
         },
         {
           "command": "prql.copySqlToClipboard",
-          "when": "prql.sqlPreviewActive",
+          "when": "prql.sqlPreviewActive || resourceLangId == prql",
           "group": "navigation"
         }
       ],
       "editor/title/context": [
         {
           "command": "prql.openSqlPreview",
-          "when": "resourceFilename =~ /\\.prql$/",
-          "group": "navigation"
+          "when": "resourceLangId == prql",
+          "group": "prql"
         },
         {
           "command": "prql.generateSqlFile",
-          "when": "resourceFilename =~ /\\.prql$/",
-          "group": "navigation"
+          "when": "resourceLangId == prql",
+          "group": "prql"
+        },
+        {
+          "command": "prql.viewSettings",
+          "when": "resourceLangId == prql",
+          "group": "prql"
+        },
+        {
+          "command": "prql.copySqlToClipboard",
+          "when": "prql.sqlPreviewActive || resourceLangId == prql",
+          "group": "prql"
         }
       ]
     },
