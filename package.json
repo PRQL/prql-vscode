@@ -111,7 +111,7 @@
         },
         {
           "command": "prql.copySqlToClipboard",
-          "when": "prql.sqlPreviewActive",
+          "when": "prql.sqlPreviewActive || resourceLangId == prql",
           "group": "navigation"
         }
       ],
@@ -124,6 +124,11 @@
         {
           "command": "prql.generateSqlFile",
           "when": "resourceLangId == prql",
+          "group": "prql"
+        },
+        {
+          "command": "prql.copySqlToClipboard",
+          "when": "prql.sqlPreviewActive || resourceLangId == prql",
           "group": "prql"
         }
       ]
