@@ -81,6 +81,13 @@
       }
     ],
     "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == prql",
+          "command": "prql.openSqlPreview",
+          "group": "prql"
+        }
+      ],
       "editor/title": [
         {
           "command": "prql.openSqlPreview",
