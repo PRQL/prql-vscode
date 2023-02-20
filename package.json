@@ -86,6 +86,11 @@
           "command": "prql.openSqlPreview",
           "when": "resourceLangId == prql",
           "group": "prql"
+        },
+        {
+          "command": "prql.generateSqlFile",
+          "when": "resourceLangId == prql",
+          "group": "prql"
         }
       ],
       "editor/title": [
