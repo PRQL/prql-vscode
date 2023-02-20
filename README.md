@@ -28,15 +28,21 @@ This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
 
 ![PRQL Features](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-vscode.gif?raw=true)
 
+### Feature Contributions
+
+PRQL extension contributes the following Settings, Commands, Languages and Activation Events to the VSCode IDE:
+
+![PRQL VSCode Feature Contributions](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-vscode-features.png?raw=true)
+
 ## Configuration
 
 Modify
 [User or Workspace Settings](https://code.visualstudio.com/docs/getstarted/settings#_creating-user-and-workspace-settings)
-in vscode to change the default PRQL compiler target setting.
+in VSCode to change the default PRQL extension Settings globally or only for the open project workspace.
 
 ![PRQL Extension Settings](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-settings.png?raw=true)
 
-Use new PRQL Settings menu in PRQL Editor to access compiler settings:
+You can use new `View PRQL Settings` PRQL editor context menu shortcut to access and modify PRQL extension Settings:
 
 ![View PRQL Settings](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-settings.gif?raw=true)
 
