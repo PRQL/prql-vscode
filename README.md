@@ -35,6 +35,14 @@ Use new PRQL Settings menu in PRQL Editor to access compiler settings:
 
 ![View PRQL Settings](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-settings.gif?raw=true)
 
+### PRQL Settings
+
+All PRQL extension settings start with `prql.` They allow you to customize PRQL [compiler options](https://github.com/PRQL/prql/tree/main/prql-js#usage) and filenames of the generated SQL files.
+
+| Setting | Descriptoin |
+| --- | --- |
+| `target` | PRQL compiler target dialect to use when generating SQL from pipeline definition files (`.prql`). Currently supported PRQL target dialect options are: `Ansi`, `BigQuery`, `ClickHouse`, `DuckDb`, `Generic`, `Hive`, `MsSql`, `MySql`, `Postgres`, `SQLite`, `Snowflake`, and `None`. The `prql.target` default is `Generic`, which will produce SQL that should work with most database management systems. It's recommended you set it to the target DB you are working with in your project [workspace settings](https://code.visualstudio.com/docs/getstarted/settings#_creating-user-and-workspace-settings). You can also disable this option by setting `prql.target` to `None` for this vscode extension. When `prql.target` is set to `None`, PRQL compiler will read the target SQL dialect from `.prql` file header as described in [PRQL Language Book](https://prql-lang.org/book/language-features/target.html). For example, setting `prql.target` to `None` and adding `prql target:sql.postgres` on the first line of your `.prql` query file will produce SQL for `PostgreSQL` database. |
+
 ## Developing
 
 - Clone the repository and install dependencies:
