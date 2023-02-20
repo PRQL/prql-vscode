@@ -75,7 +75,7 @@
       },
       {
         "command": "prql.viewSettings",
-        "title": "Settings",
+        "title": "View PRQL Settings",
         "category": "PRQL",
         "icon": "$(gear)"
       }
@@ -123,6 +123,11 @@
         },
         {
           "command": "prql.generateSqlFile",
+          "when": "resourceLangId == prql",
+          "group": "prql"
+        },
+        {
+          "command": "prql.viewSettings",
           "when": "resourceLangId == prql",
           "group": "prql"
         },
