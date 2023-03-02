@@ -183,7 +183,7 @@
     "watch": "tsc -w -p ./"
   },
   "dependencies": {
-    "@types/vscode": "^1.75.1",
+    "@types/vscode": "^1.76.0",
     "prql-js": "^0.5.2",
     "shiki": "^0.14.1"
   },
