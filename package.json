@@ -188,7 +188,7 @@
     "shiki": "^0.14.1"
   },
   "devDependencies": {
-    "@types/node": "^18.15.2",
+    "@types/node": "^18.15.3",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.55.0",
     "eslint": "^8.36.0",
