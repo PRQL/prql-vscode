@@ -1,0 +1,75 @@
+prql target:sql.duckdb
+
+let config = (
+    from_text format:json '[{"num_digits":50}]'
+    derive [
+        array_len = (10*num_digits)/3,
+        calc_len = 1+4,
+        loop_len = array_len + calc_len,
+    ]
+)
+
+func loop_steps step_0 step_i step_1 step_2 step_3 other -> case [
+    k==0 => step_0,
+    1 <= k and k <= array_len => step_i,
+    k==array_len+1 => step_1,
+    k==array_len+2 => step_2,
+    k==array_len+3 => step_3,
+    true => other,
+]
+
+func q_steps step_q9 step_q10 step_j2 step_jg2 other -> case [
+    q==9 => step_q9,
+    q==10 => step_q10,
+    j==2 => step_j2,
+    j>2 => step_jg2,
+    true => other,
+]
+
+
+from config
+select [
+    num_digits,
+    array_len,
+    loop_len,
+    j = 0,
+    k = 0,
+    q = 0,
+    a = s"[2 for i in range({array_len})]",
+    nines = 0,
+    predigit = 0,
+    output = '',
+]
+loop (
+    filter j < num_digits + 1
+    derive [
+      j_new = case [k==0 => j+1, true => j],
+      k_new = (k+1) % loop_len,
+      q_step_i = (10*s"{a}[{k}]"+q*(array_len-k+1))/(2*(array_len-k)+1),
+      q_new = loop_steps 0 q_step_i (q/10) q q q,
+
+      a_step_i = s"[CASE WHEN i=={k} THEN (10*{a}[i]+{q}*({array_len}-i+1))%(2*({array_len}-i)+1) ELSE {a}[i] END for i in generate_series(1,{array_len})]",
+      a_step_1 = s"[CASE WHEN i=={array_len} THEN {q}%10 ELSE {a}[i] END for i in generate_series(1,{array_len})]",
+      a_new = loop_steps a a_step_i a_step_1 a a a,
+
+      nines_new = loop_steps nines nines nines (q_steps (nines+1) 0 nines nines nines) (case [q!=9 and q!=10 and nines!=0 => 0, true => nines]) nines,
+      predigit_new = loop_steps predigit predigit predigit (q_steps predigit 0 q q q) predigit predigit,
+
+      output_step_2 = (q_steps '' s"({predigit}+1)::string || repeat('0', {nines})" s"{predigit}::string || '.'" s"{predigit}::string" ''),
+      output_step_3 = (case [q!=9 and q!=10 and nines!=0 => s"repeat('9', {nines})", true => '']),
+      output_new = loop_steps '' '' '' output_step_2 output_step_3 '',
+    ]
+    select [
+        num_digits,
+        array_len,
+        loop_len,
+        j = j_new,
+        k = k_new,
+        q = q_new,
+        a = a_new,
+        nines = nines_new,
+        predigit = predigit_new,
+        output = output_new,
+    ]
+)
+aggregate [pi=s"string_agg({output}, '')"]
