@@ -159,7 +159,7 @@
             "Snowflake",
             "None"
           ],
-          "default": "Generic",
+          "default": "None",
           "order": 0,
           "description": "PRQL compiler target dialect to use when generating SQL from pipeline definition files."
         },
