@@ -192,7 +192,7 @@
   },
   "dependencies": {
     "@types/vscode": "^1.77.0",
-    "prql-js": "^0.7.1",
+    "prql-js": "^0.8.0",
     "shiki": "^0.14.1"
   }
 }
