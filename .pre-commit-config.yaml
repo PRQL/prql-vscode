@@ -7,7 +7,7 @@ repos:
       - id: check-yaml
       - id: mixed-line-ending
   - repo: https://github.com/crate-ci/typos
-    rev: typos-dict-v0.9.27
+    rev: v1.14.11
     hooks:
       - id: typos
         # https://github.com/crate-ci/typos/issues/347
