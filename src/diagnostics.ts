@@ -33,16 +33,21 @@ function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
     const result = compile(text);
 
     if (!Array.isArray(result)) {
+      // success, clear the errors
       diagnosticCollection.set(editor.document.uri, []);
     } else {
-      const range = getRange(result[0].location);
-      const diagnostic = new Diagnostic(
-        range,
-        result[0].reason ?? 'Syntax Error',
-        DiagnosticSeverity.Error
-      );
+      const diagnostics = result
+        // don't report errors for missing main pipeline
+        .filter((e) => e.code !== 'E0001')
+        .map((e) => {
+          return new Diagnostic(
+            getRange(e.location),
+            e.reason,
+            DiagnosticSeverity.Error
+          );
+        });
 
-      diagnosticCollection.set(editor.document.uri, [diagnostic]);
+      diagnosticCollection.set(editor.document.uri, diagnostics);
     }
   }
 }
