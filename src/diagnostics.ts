@@ -34,8 +34,7 @@ function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
 
     if (!Array.isArray(result)) {
       diagnosticCollection.set(editor.document.uri, []);
-    }
-    else {
+    } else {
       const range = getRange(result[0].location);
       const diagnostic = new Diagnostic(
         range,

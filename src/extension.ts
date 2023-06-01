@@ -1,7 +1,4 @@
-import {
-  window,
-  ExtensionContext
-} from 'vscode';
+import { window, ExtensionContext } from 'vscode';
 
 import { SqlPreviewSerializer } from './views/sqlPreviewSerializer';
 import { activateDiagnostics } from './diagnostics';
@@ -29,8 +26,7 @@ export function activate(context: ExtensionContext) {
       if (editor && editor.document.languageId === 'prql') {
         // reveal the corresponding sql preview, if already open
         SqlPreview.reveal(context, editor.document.uri);
-      }
-      else {
+      } else {
         SqlPreview.clearActiveSqlPreviewContext(context);
       }
     })
