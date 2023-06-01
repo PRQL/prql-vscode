@@ -14,7 +14,6 @@ import * as constants from '../constants';
  * Sql Preview webview panel serializer for restoring open Sql Previews on vscode reload.
  */
 export class SqlPreviewSerializer implements WebviewPanelSerializer {
-
   /**
    * Registers Sql Preview serializer.
    *
@@ -23,7 +22,9 @@ export class SqlPreviewSerializer implements WebviewPanelSerializer {
    */
   public static register(context: ExtensionContext): Disposable {
     return window.registerWebviewPanelSerializer(
-      constants.SqlPreviewPanel, new SqlPreviewSerializer(context));
+      constants.SqlPreviewPanel,
+      new SqlPreviewSerializer(context)
+    );
   }
 
   /**
@@ -31,8 +32,7 @@ export class SqlPreviewSerializer implements WebviewPanelSerializer {
    *
    * @param extensionUri Extension context.
    */
-  constructor(private readonly context: ExtensionContext) {
-  }
+  constructor(private readonly context: ExtensionContext) {}
 
   /**
    * Restores open Sql Preview webview panel on vscode reload.

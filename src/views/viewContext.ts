@@ -7,5 +7,5 @@
  */
 export const enum ViewContext {
   SqlPreviewActive = 'prql.sqlPreviewActive',
-  LastActivePrqlDocumentUri = 'prql.lastActivePrqlDocumentUri'
+  LastActivePrqlDocumentUri = 'prql.lastActivePrqlDocumentUri',
 }

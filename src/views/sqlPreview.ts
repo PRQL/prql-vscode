@@ -11,7 +11,7 @@ import {
   Webview,
   WebviewPanel,
   WebviewPanelOnDidChangeViewStateEvent,
-  Uri
+  Uri,
 } from 'vscode';
 
 import * as shiki from 'shiki';
@@ -30,10 +30,12 @@ import * as constants from '../constants';
  * Defines Sql Preview class for managing state and behaviour of Sql Preview webview panel(s).
  */
 export class SqlPreview {
-
   // view tracking vars
   public static currentView: SqlPreview | undefined;
-  private static _views: Map<string, SqlPreview> = new Map<string, SqlPreview>();
+  private static _views: Map<string, SqlPreview> = new Map<
+    string,
+    SqlPreview
+  >();
 
   // view instance vars
   private readonly _webviewPanel: WebviewPanel;
@@ -55,26 +57,35 @@ export class SqlPreview {
    * @param webviewPanel Optional webview panel instance.
    * @param viewConfig View config to restore.
    */
-  public static render(context: ExtensionContext, documentUri: Uri, webviewPanel?: WebviewPanel) {
-
+  public static render(
+    context: ExtensionContext,
+    documentUri: Uri,
+    webviewPanel?: WebviewPanel
+  ) {
     // attempt to reveal an open sql preview
-    const sqlPreview: SqlPreview | undefined = SqlPreview.reveal(context, documentUri);
+    const sqlPreview: SqlPreview | undefined = SqlPreview.reveal(
+      context,
+      documentUri
+    );
 
     if (sqlPreview === undefined) {
       if (!webviewPanel) {
         // create new webview panel for the prql document sql preview
         webviewPanel = SqlPreview.createWebviewPanel(context, documentUri);
-      }
-      else {
+      } else {
         // enable scripts for existing webview panel
         webviewPanel.webview.options = {
           enableScripts: true,
-          enableCommandUris: true
+          enableCommandUris: true,
         };
       }
 
       // create new sql peview and set it as current view
-      SqlPreview.currentView = new SqlPreview(context, webviewPanel, documentUri);
+      SqlPreview.currentView = new SqlPreview(
+        context,
+        webviewPanel,
+        documentUri
+      );
     }
 
     sqlPreview?.updateActiveSqlPreviewContext(context);
@@ -87,20 +98,24 @@ export class SqlPreview {
    * @param documentUri PRQL document Uri.
    * @returns The corresponding open Sql Preview for a PRQL document URI, or undefined.
    */
-  public static reveal(context: ExtensionContext, documentUri: Uri): SqlPreview | undefined {
+  public static reveal(
+    context: ExtensionContext,
+    documentUri: Uri
+  ): SqlPreview | undefined {
     // create view Uri
-    const viewUri: Uri = documentUri.with({scheme: 'prql'});
+    const viewUri: Uri = documentUri.with({ scheme: 'prql' });
 
     // get an open sql preview
-    const sqlPreview: SqlPreview | undefined = SqlPreview._views.get(viewUri.toString(true)); // skip encoding
+    const sqlPreview: SqlPreview | undefined = SqlPreview._views.get(
+      viewUri.toString(true)
+    ); // skip encoding
 
     if (sqlPreview !== undefined) {
       // show loaded webview panel
       sqlPreview.reveal(context);
       SqlPreview.currentView = sqlPreview;
       return sqlPreview;
-    }
-    else {
+    } else {
       SqlPreview.clearActiveSqlPreviewContext(context);
     }
 
@@ -115,7 +130,11 @@ export class SqlPreview {
   public static clearActiveSqlPreviewContext(context: ExtensionContext) {
     SqlPreview.currentView = undefined;
     commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
-    commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, undefined);
+    commands.executeCommand(
+      'setContext',
+      ViewContext.LastActivePrqlDocumentUri,
+      undefined
+    );
     context.workspaceState.update('prql.sql', undefined);
   }
 
@@ -126,7 +145,10 @@ export class SqlPreview {
    * @param documentUri PRQL source document Uri.
    * @returns New webview panel instance.
    */
-  private static createWebviewPanel(context: ExtensionContext, documentUri: Uri): WebviewPanel {
+  private static createWebviewPanel(
+    context: ExtensionContext,
+    documentUri: Uri
+  ): WebviewPanel {
     // create sql preview filename for the webview panel title display
     const fileName = path.basename(documentUri.path, '.prql'); // strip out prql file ext.
 
@@ -136,9 +158,10 @@ export class SqlPreview {
       `${fileName}.sql`, // webview panel title
       {
         viewColumn: ViewColumn.Beside, // display it on the side
-        preserveFocus: true
+        preserveFocus: true,
       },
-      { // webview panel options
+      {
+        // webview panel options
         enableScripts: true, // enable JavaScript in webview
         enableCommandUris: true,
         enableFindWidget: true,
@@ -149,7 +172,8 @@ export class SqlPreview {
 
     // set custom sql preview panel icon
     webviewPanel.iconPath = Uri.file(
-      path.join(context.extensionUri.fsPath, 'resources', 'prql-logo.png'));
+      path.join(context.extensionUri.fsPath, 'resources', 'prql-logo.png')
+    );
 
     return webviewPanel;
   }
@@ -161,11 +185,15 @@ export class SqlPreview {
    * @param webviewPanel Reference to the webview panel.
    * @param documentUri PRQL document Uri.
    */
-  private constructor(context: ExtensionContext, webviewPanel: WebviewPanel, documentUri: Uri) {
+  private constructor(
+    context: ExtensionContext,
+    webviewPanel: WebviewPanel,
+    documentUri: Uri
+  ) {
     // save view context info
     this._webviewPanel = webviewPanel;
     this._documentUri = documentUri;
-    this._viewUri = documentUri.with({scheme: 'prql'});
+    this._viewUri = documentUri.with({ scheme: 'prql' });
 
     // configure webview panel
     this.configure(context);
@@ -179,29 +207,42 @@ export class SqlPreview {
       (viewChangeEvent: WebviewPanelOnDidChangeViewStateEvent) => {
         if (this._webviewPanel.active) {
           // update view context values
-          commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
-          commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, documentUri);
+          commands.executeCommand(
+            'setContext',
+            ViewContext.SqlPreviewActive,
+            true
+          );
+          commands.executeCommand(
+            'setContext',
+            ViewContext.LastActivePrqlDocumentUri,
+            documentUri
+          );
           SqlPreview.currentView = this;
-        }
-        else {
+        } else {
           // clear sql preview context
-          commands.executeCommand('setContext', ViewContext.SqlPreviewActive, false);
+          commands.executeCommand(
+            'setContext',
+            ViewContext.SqlPreviewActive,
+            false
+          );
           SqlPreview.currentView = undefined;
         }
-      });
-
-    // add prql text document change handler
-    [workspace.onDidOpenTextDocument, workspace.onDidChangeTextDocument].forEach(
-      (event: Event<TextDocument> | Event<TextDocumentChangeEvent>)  => {
-        this._disposables.push(
-          event(
-            this.debounce(() => {
-              this.update(context);
-            }, 10)
-          )
-        );
       }
     );
+
+    // add prql text document change handler
+    [
+      workspace.onDidOpenTextDocument,
+      workspace.onDidChangeTextDocument,
+    ].forEach((event: Event<TextDocument> | Event<TextDocumentChangeEvent>) => {
+      this._disposables.push(
+        event(
+          this.debounce(() => {
+            this.update(context);
+          }, 10)
+        )
+      );
+    });
 
     // add active text editor change handler
     this._disposables.push(
@@ -223,7 +264,7 @@ export class SqlPreview {
         this._highlighter = undefined;
 
         // notify webview
-        webviewPanel.webview.postMessage({command: 'changeTheme'});
+        webviewPanel.webview.postMessage({ command: 'changeTheme' });
       })
     );
 
@@ -249,8 +290,8 @@ export class SqlPreview {
   }
 
   /**
-    * Disposes Sql Preview webview resources when webview panel is closed.
-    */
+   * Disposes Sql Preview webview resources when webview panel is closed.
+   */
   public dispose(context: ExtensionContext) {
     SqlPreview.currentView = undefined;
     SqlPreview._views.delete(this._viewUri.toString(true)); // skip encoding
@@ -259,45 +300,56 @@ export class SqlPreview {
   }
 
   /**
-    * Reveals loaded Sql Preview and sets it as active in vscode editor panel.
-    *
-    * @param context Extension context.
-    */
+   * Reveals loaded Sql Preview and sets it as active in vscode editor panel.
+   *
+   * @param context Extension context.
+   */
   public reveal(context: ExtensionContext) {
-    const viewColumn: ViewColumn = ViewColumn.Active ? ViewColumn.Active : ViewColumn.One;
+    const viewColumn: ViewColumn = ViewColumn.Active
+      ? ViewColumn.Active
+      : ViewColumn.One;
     this.webviewPanel.reveal(viewColumn, true); // preserve current active editor focus
     this.updateActiveSqlPreviewContext(context);
   }
 
   /**
-     * Configures webview html for Sql Preview display,
-     * and registers webview message request handlers for updates.
-     *
-     * @param context Extension context.
-     * @param viewConfig Sql Preview config.
-     */
+   * Configures webview html for Sql Preview display,
+   * and registers webview message request handlers for updates.
+   *
+   * @param context Extension context.
+   * @param viewConfig Sql Preview config.
+   */
   private async configure(context: ExtensionContext) {
     // set view html content for the webview panel
-    this.webviewPanel.webview.html = this.getHtmlTemplate(context, this.webviewPanel.webview);
+    this.webviewPanel.webview.html = this.getHtmlTemplate(
+      context,
+      this.webviewPanel.webview
+    );
 
     // process webview messages
-    this.webviewPanel.webview.onDidReceiveMessage((message: any) => {
-      const command: string = message.command;
-      switch (command) {
-        case 'refresh':
-          // reload data view and config
-          this.refresh();
-          break;
-      }
-    }, undefined, this._disposables);
+    this.webviewPanel.webview.onDidReceiveMessage(
+      (message: any) => {
+        const command: string = message.command;
+        switch (command) {
+          case 'refresh':
+            // reload data view and config
+            this.refresh();
+            break;
+        }
+      },
+      undefined,
+      this._disposables
+    );
 
     let prqlCode = undefined;
-    if (fs.existsSync(this.documentUri.fsPath) &&
-        this.documentUri.fsPath.endsWith('.prql')) {
-
+    if (
+      fs.existsSync(this.documentUri.fsPath) &&
+      this.documentUri.fsPath.endsWith('.prql')
+    ) {
       // load initial prql code from file
       const prqlContent: Uint8Array = await workspace.fs.readFile(
-        Uri.file(this.documentUri.fsPath));
+        Uri.file(this.documentUri.fsPath)
+      );
 
       const textDecoder = new TextDecoder('utf8');
       prqlCode = textDecoder.decode(prqlContent);
@@ -307,7 +359,6 @@ export class SqlPreview {
     this.refresh();
     this.update(context, prqlCode);
   }
-
 
   /**
    * Loads and creates html template for Sql Preview webview.
@@ -319,13 +370,16 @@ export class SqlPreview {
   private getHtmlTemplate(context: ExtensionContext, webview: Webview): string {
     // load webview html template, stylesheet and sql preview script
     const htmlTemplate = readFileSync(
-      this.getResourceUri(context, 'sql-preview.html').fsPath, 'utf-8');
+      this.getResourceUri(context, 'sql-preview.html').fsPath,
+      'utf-8'
+    );
     const stylesheetUri: Uri = this.getResourceUri(context, 'sql-preview.css');
     const scriptUri: Uri = this.getResourceUri(context, 'sqlPreview.js');
 
     // inject webview resource urls into the loaded webview html template,
     // add webview CSP source, and convert css and js Uris to webview resource Uris
-    return htmlTemplate.replace(/##CSP_SOURCE##/g, webview.cspSource)
+    return htmlTemplate
+      .replace(/##CSP_SOURCE##/g, webview.cspSource)
       .replace('##CSS_URI##', webview.asWebviewUri(stylesheetUri).toString())
       .replace('##JS_URI##', webview.asWebviewUri(scriptUri).toString());
   }
@@ -342,13 +396,13 @@ export class SqlPreview {
   }
 
   /**
-    * Reloads Sql Preview for the active PRQL document Uri or on vscode IDE realod.
-    */
+   * Reloads Sql Preview for the active PRQL document Uri or on vscode IDE realod.
+   */
   public async refresh(): Promise<void> {
     // update view state
     this.webviewPanel.webview.postMessage({
       command: 'refresh',
-      documentUrl: this.documentUri.fsPath
+      documentUrl: this.documentUri.fsPath,
     });
   }
 
@@ -363,15 +417,16 @@ export class SqlPreview {
   private update(context: ExtensionContext, prqlCode?: string) {
     // check active text editor
     const editor = window.activeTextEditor;
-    if (this.webviewPanel.visible && editor &&
-        editor.document.languageId === 'prql' &&
-        editor.document.uri.fsPath === this.documentUri.fsPath) {
-
+    if (
+      this.webviewPanel.visible &&
+      editor &&
+      editor.document.languageId === 'prql' &&
+      editor.document.uri.fsPath === this.documentUri.fsPath
+    ) {
       // get updated prql code from the active PRQL text editor
       const prqlCode = editor.document.getText();
       this.processPrql(context, prqlCode);
-    }
-    else if (prqlCode) {
+    } else if (prqlCode) {
       this.processPrql(context, prqlCode);
     }
   }
@@ -383,7 +438,11 @@ export class SqlPreview {
    */
   private async updateActiveSqlPreviewContext(context: ExtensionContext) {
     commands.executeCommand('setContext', ViewContext.SqlPreviewActive, true);
-    commands.executeCommand('setContext', ViewContext.LastActivePrqlDocumentUri, this.documentUri);
+    commands.executeCommand(
+      'setContext',
+      ViewContext.LastActivePrqlDocumentUri,
+      this.documentUri
+    );
     // update active sql preview sql text in workspace state
     context.workspaceState.update('prql.sql', this._lastCompilationResult?.sql);
   }
@@ -405,22 +464,24 @@ export class SqlPreview {
    * @param prqlCode PRQL code to process.
    */
   private async processPrql(context: ExtensionContext, prqlCode: string) {
-    this.compilePrql(prqlCode, this._lastCompilationResult?.lastSqlHtml).then((compilationResult) => {
-      if (compilationResult.status === 'ok') {
-        // save the last valid compilation result
-        // to show it when errors occur later,
-        // or on sql preview panel reveal
-        this._lastCompilationResult = compilationResult;
+    this.compilePrql(prqlCode, this._lastCompilationResult?.lastSqlHtml).then(
+      (compilationResult) => {
+        if (compilationResult.status === 'ok') {
+          // save the last valid compilation result
+          // to show it when errors occur later,
+          // or on sql preview panel reveal
+          this._lastCompilationResult = compilationResult;
+        }
+
+        // update webview
+        this.webviewPanel.webview.postMessage({
+          command: 'update',
+          result: compilationResult,
+        });
+
+        this.updateActiveSqlPreviewContext(context);
       }
-
-      // update webview
-      this.webviewPanel.webview.postMessage({
-        command: 'update',
-        result: compilationResult
-      });
-
-      this.updateActiveSqlPreviewContext(context);
-    });
+    );
   }
 
   /**
@@ -431,9 +492,10 @@ export class SqlPreview {
    * @param lastSqlHtml Last valid sql html output.
    * @returns Compilation result in sql and html formats.
    */
-  private async compilePrql(prqlCode: string,
-    lastSqlHtml: string | undefined): Promise<CompilationResult> {
-
+  private async compilePrql(
+    prqlCode: string,
+    lastSqlHtml: string | undefined
+  ): Promise<CompilationResult> {
     // compile given prql code
     const sqlCode = compile(prqlCode);
     if (Array.isArray(sqlCode)) {
@@ -449,9 +511,9 @@ export class SqlPreview {
 
     // create html to display for the generated sql
     const highlighter = await this.getHighlighter();
-    const sqlHtml = highlighter.codeToHtml(sqlCode, {lang: 'sql'});
+    const sqlHtml = highlighter.codeToHtml(sqlCode, { lang: 'sql' });
 
-    return {status: 'ok', sqlHtml: sqlHtml, sql: sqlCode};
+    return { status: 'ok', sqlHtml: sqlHtml, sql: sqlCode };
   }
 
   /**
@@ -463,7 +525,9 @@ export class SqlPreview {
     if (this._highlighter) {
       return Promise.resolve(this._highlighter);
     }
-    return (this._highlighter = await shiki.getHighlighter({theme: this.themeName}));
+    return (this._highlighter = await shiki.getHighlighter({
+      theme: this.themeName,
+    }));
   }
 
   /**
@@ -472,7 +536,8 @@ export class SqlPreview {
    */
   get themeName(): string {
     // get current vscode color UI theme name
-    let colorTheme = workspace.getConfiguration('workbench')
+    let colorTheme = workspace
+      .getConfiguration('workbench')
       .get<string>('colorTheme', 'dark-plus'); // default to dark plus
 
     if (shiki.BUNDLED_THEMES.includes(colorTheme as shiki.Theme)) {
@@ -480,7 +545,10 @@ export class SqlPreview {
     }
 
     // try normalized color theme name
-    colorTheme = colorTheme.toLowerCase().replace('theme', '').replace(/\s+/g, '-');
+    colorTheme = colorTheme
+      .toLowerCase()
+      .replace('theme', '')
+      .replace(/\s+/g, '-');
     if (shiki.BUNDLED_THEMES.includes(colorTheme as shiki.Theme)) {
       return colorTheme;
     }
