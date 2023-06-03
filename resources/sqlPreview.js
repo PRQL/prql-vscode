@@ -3,7 +3,7 @@ const vscode = acquireVsCodeApi();
 
 // prql document vars and view state
 let documentUrl = '';
-let viewState = {documentUrl: documentUrl};
+let viewState = { documentUrl: documentUrl };
 
 // add page load handler
 window.addEventListener('load', initializeView);
@@ -17,8 +17,7 @@ function initializeView() {
   if (viewState && viewState.documentUrl) {
     // get last previewed prql document url
     documentUrl = viewState.documentUrl;
-  }
-  else {
+  } else {
     // create new empty view config
     viewState = {};
     viewState.documentUrl = documentUrl;
@@ -26,7 +25,7 @@ function initializeView() {
   }
 
   // request initial sql preview load
-  vscode.postMessage({command: 'refresh'});
+  vscode.postMessage({ command: 'refresh' });
 }
 
 // add view update handler
@@ -34,7 +33,7 @@ window.addEventListener('message', (event) => {
   switch (event.data.command) {
     case 'update':
       // show updated sql preview content
-      update(event.data.result)
+      update(event.data.result);
       break;
     case 'changeTheme':
       // do nothing: this webview html is UI theme neutral,
@@ -60,7 +59,6 @@ function updateViewState(prqlInfo) {
   vscode.setState(viewState);
 }
 
-
 /**
  * Displays updated sql html from compiled PRQL result.
  *
@@ -72,18 +70,18 @@ function update(compilationResult) {
   const errorContainer = document.getElementById('error-container');
   if (result.status === 'ok') {
     document.getElementById('result').innerHTML = result.sqlHtml;
-  }
-  else if (result.lastSqlHtml) {
+  } else if (result.lastSqlHtml) {
     document.getElementById('last-html').innerHTML = result.lastSqlHtml;
-    document.getElementById('error-container').classList.add('error-container-fixed');
+    document
+      .getElementById('error-container')
+      .classList.add('error-container-fixed');
   }
 
   if (result.status === 'error' && result.error.message.length > 0) {
     // show errors
     document.getElementById('error-message').innerHTML = result.error.message;
     errorContainer.style.display = 'block';
-  }
-  else {
+  } else {
     // hide error container
     errorContainer.style.display = 'none';
   }
