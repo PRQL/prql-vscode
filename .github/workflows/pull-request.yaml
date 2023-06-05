@@ -22,3 +22,16 @@ jobs:
           node-version: 16
       - run: npm ci
       - run: npm run compile
+
+  automerge-dependabot:
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - uses: fastify/github-action-merge-dependabot@v3
+        with:
+          github-token: ${{ github.token }}
+          use-github-auto-merge: true
