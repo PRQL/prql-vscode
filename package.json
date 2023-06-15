@@ -156,7 +156,7 @@
             "Postgres",
             "SQLite",
             "Snowflake",
-            "None"
+            "Any"
           ],
           "default": "Generic",
           "order": 0,
