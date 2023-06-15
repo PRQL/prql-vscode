@@ -151,7 +151,6 @@
             "ClickHouse",
             "DuckDb",
             "Generic",
-            "Hive",
             "MsSql",
             "MySql",
             "Postgres",
