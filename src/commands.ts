@@ -144,7 +144,7 @@ async function generateSqlFile(prqlDocumentUri: Uri, prqlCode: string) {
     if (
       addTargetDialectToSqlFilenames &&
       target !== 'Generic' &&
-      target !== 'None'
+      target !== 'Any'
     ) {
       sqlFilenameSuffix = `.${target.toLowerCase()}`;
     }

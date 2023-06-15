@@ -151,13 +151,12 @@
             "ClickHouse",
             "DuckDb",
             "Generic",
-            "Hive",
             "MsSql",
             "MySql",
             "Postgres",
             "SQLite",
             "Snowflake",
-            "None"
+            "Any"
           ],
           "default": "Generic",
           "order": 0,
