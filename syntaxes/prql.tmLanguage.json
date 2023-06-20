@@ -39,7 +39,7 @@
       "patterns": [
         {
           "name": "keyword.control.prql",
-          "match": "\\b(from|select|derive|filter|take|sort|join|aggregate|group|func|table|and|or|not|null|true|false)\\b"
+          "match": "\\b(let|into|case|prql|type|module|internal|from|from_text|select|derive|filter|take|sort|join|aggregate|group|null|true|false)\\b"
         }
       ]
     },
