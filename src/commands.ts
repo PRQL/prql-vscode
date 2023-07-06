@@ -59,7 +59,7 @@ export function registerCommands(context: ExtensionContext) {
       // get sql filename and content fromn sql preview
       sqlFileName = `prql://${path.basename(
         SqlPreview.currentView.documentUri.path,
-        '.prql'
+        '.prql',
       )}.sql`;
       sql = SqlPreview.currentView.lastCompilationResult?.sql;
     }
@@ -84,7 +84,7 @@ function registerCommand(
   context: ExtensionContext,
   commandId: string,
   callback: (...args: any[]) => any,
-  thisArg?: any
+  thisArg?: any,
 ): void {
   const command: Disposable = commands.registerCommand(
     commandId,
@@ -96,7 +96,7 @@ function registerCommand(
         console.error(e);
       }
     },
-    thisArg
+    thisArg,
   );
   context.subscriptions.push(command);
 }
@@ -107,7 +107,7 @@ function registerCommand(
 async function viewPrqlSettings() {
   await commands.executeCommand(
     constants.WorkbenchActionOpenSettings,
-    constants.ExtensionId
+    constants.ExtensionId,
   );
 }
 
@@ -150,7 +150,7 @@ async function generateSqlFile(prqlDocumentUri: Uri, prqlCode: string) {
     }
     const sqlFilePath = path.join(
       prqlFilePath.dir,
-      `${prqlFilePath.name}${sqlFilenameSuffix}.sql`
+      `${prqlFilePath.name}${sqlFilenameSuffix}.sql`,
     );
 
     // create sql file

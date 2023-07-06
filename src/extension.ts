@@ -29,6 +29,6 @@ export function activate(context: ExtensionContext) {
       } else {
         SqlPreview.clearActiveSqlPreviewContext(context);
       }
-    })
+    }),
   );
 }

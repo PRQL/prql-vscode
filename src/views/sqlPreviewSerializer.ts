@@ -23,7 +23,7 @@ export class SqlPreviewSerializer implements WebviewPanelSerializer {
   public static register(context: ExtensionContext): Disposable {
     return window.registerWebviewPanelSerializer(
       constants.SqlPreviewPanel,
-      new SqlPreviewSerializer(context)
+      new SqlPreviewSerializer(context),
     );
   }
 

@@ -19,7 +19,7 @@ function getRange(location: SourceLocation | null): Range {
       location.start[0],
       location.start[1],
       location.end[0],
-      location.end[1]
+      location.end[1],
     );
   }
   return new Range(new Position(0, 0), new Position(0, 0));
@@ -43,7 +43,7 @@ function updateLineDiagnostics(diagnosticCollection: DiagnosticCollection) {
           return new Diagnostic(
             getRange(e.location),
             e.reason,
-            DiagnosticSeverity.Error
+            DiagnosticSeverity.Error,
           );
         });
 
@@ -57,7 +57,7 @@ export function activateDiagnostics(context: ExtensionContext) {
   context.subscriptions.push(diagnosticCollection);
 
   workspace.onDidCloseTextDocument((document: TextDocument) =>
-    diagnosticCollection.set(document.uri, [])
+    diagnosticCollection.set(document.uri, []),
   );
 
   [
@@ -66,7 +66,7 @@ export function activateDiagnostics(context: ExtensionContext) {
     window.onDidChangeActiveTextEditor,
   ].forEach((event) => {
     context.subscriptions.push(
-      event(() => updateLineDiagnostics(diagnosticCollection))
+      event(() => updateLineDiagnostics(diagnosticCollection)),
     );
   });
 
