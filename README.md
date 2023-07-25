@@ -62,7 +62,7 @@ PRQL extension and the underlying [`prql-js`](https://github.com/PRQL/prql/tree/
 
 The `prql.target` extension setting default option value is `Generic`, which will produce SQL that should work with most database management systems. We recommend you set it to the target DB you are working with in your project [workspace settings](https://code.visualstudio.com/docs/getstarted/settings#_creating-user-and-workspace-settings).
 
-You can also disable this PRQL compiler option in vscode extension by setting `prql.target` to `Any`. When `prql.target` is set to `Any`, PRQL compiler will read the target SQL dialect from `.prql` file header as described in [PRQL Language Book](https://prql-lang.org/book/language-features/target.html). For example, setting `prql.target` to `Any` and adding `prql target:sql.postgres` on the first line of your `.prql` query file will produce SQL for `PostgreSQL` database. Otherwise, `Generic` SQL flavor will be used for the generated SQL.
+You can also disable this PRQL compiler option in vscode extension by setting `prql.target` to `Any`. When `prql.target` is set to `Any`, PRQL compiler will read the target SQL dialect from `.prql` file header as described in [PRQL Language Book](https://prql-lang.org/book/project/target.html). For example, setting `prql.target` to `Any` and adding `prql target:sql.postgres` on the first line of your `.prql` query file will produce SQL for `PostgreSQL` database. Otherwise, `Generic` SQL flavor will be used for the generated SQL.
 
 ## Developing
 
