@@ -12,7 +12,7 @@ See [releases](https://github.com/PRQL/prql-vscode/releases) for a brief summary
 
 - Refactor SQL Preview webview implementation
   ([#60](https://github.com/PRQL/prql-vscode/issues/60))
-- Add VSCode marketplace badges to README.md
+- Add VS Code marketplace badges to README.md
   ([#87](https://github.com/PRQL/prql-vscode/issues/87))
 - Add PRQL Settings shortcut menu button to SQL Preview and PRQL Editor titlebar
   ([#90](https://github.com/PRQL/prql-vscode/issues/90))
@@ -26,7 +26,7 @@ See [releases](https://github.com/PRQL/prql-vscode/releases) for a brief summary
   ([#98](https://github.com/PRQL/prql-vscode/issues/98))
 - Set PRQL Settings order to show Target setting first
   ([#99](https://github.com/PRQL/prql-vscode/issues/99))
-- Implement SQL Preview webview deserialize to show it after VSCode reload
+- Implement SQL Preview webview deserialize to show it after VS Code reload
   ([#102](https://github.com/PRQL/prql-vscode/issues/102))
 - Add boolean prql.addTargetDialectToSqlFilenames setting for the generated SQL filenames
   ([#103](https://github.com/PRQL/prql-vscode/issues/103))
