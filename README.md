@@ -9,7 +9,7 @@
 PRQL is a modern language for transforming data — a simple, powerful, pipelined
 SQL replacement.
 
-This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
+This extension adds [PRQL](https://prql-lang.org/) support to VS Code.
 
 ![PRQL Editor and SQL Preview](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-vscode.png?raw=true)
 
@@ -17,9 +17,9 @@ This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
 
 - [PRQL](https://prql-lang.org/) language support and syntax highlighting
 - SQL Previews with Problems diagnostics and PRQL errors display updated on every keystroke as you type PRQL
-- Dedicated SQL Previews linked to open PRQL documents in VSCode editor
-- Restore open SQL Previews on VSCode reload
-- Copy SQL from an open SQL Preview to VSCode Clipboard
+- Dedicated SQL Previews linked to open PRQL documents in VS Code editor
+- Restore open SQL Previews on VS Code reload
+- Copy SQL from an open SQL Preview to VS Code Clipboard
 - Generate SQL File PRQL editor context menu shortcut
 - View PRQL Settings editor context menu shortcut
 - PRQL compile target setting for the generated SQL dialect
@@ -30,15 +30,15 @@ This extension adds [PRQL](https://prql-lang.org/) support to VSCode IDE.
 
 ### Feature Contributions
 
-PRQL extension contributes the following Settings, Commands, Languages and Activation Events to the VSCode IDE:
+PRQL extension contributes the following Settings, Commands, Languages and Activation Events to the VS Code:
 
-![PRQL VSCode Feature Contributions](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-vscode-features.png?raw=true)
+![PRQL VS Code Feature Contributions](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-vscode-features.png?raw=true)
 
 ## Configuration
 
 Modify
 [User or Workspace Settings](https://code.visualstudio.com/docs/getstarted/settings#_creating-user-and-workspace-settings)
-in VSCode to change the default PRQL extension Settings globally or only for the open project workspace.
+in VS Code to change the default PRQL extension Settings globally or only for the open project workspace.
 
 ![PRQL Extension Settings](https://github.com/PRQL/prql-vscode/blob/main/docs/images/prql-settings.png?raw=true)
 
@@ -73,7 +73,7 @@ You can also disable this PRQL compiler option in vscode extension by setting `p
   cd prql-vscode && npm install
   ```
 
-- Open the project in VSCode and start the TypeScript compilation task via
+- Open the project in VS Code and start the TypeScript compilation task via
   `Command Palette` -> `Tasks: Run build task` -> `npm: watch`. Alternatively,
   you can run the compilation in your terminal directly:
 
