@@ -190,7 +190,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@types/vscode": "^1.81.0",
+    "@types/vscode": "^1.82.0",
     "prql-js": "^0.9.4",
     "shiki": "^0.14.4"
   }
