@@ -1,12 +1,29 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   "name": "PRQL",
+  "scopeName": "source.prql",
+  "fileTypes": ["prql"],
   "patterns": [
+    {
+      "include": "#unicode-bidi"
+    },
+    {
+      "include": "#docblock"
+    },
     {
       "include": "#comment"
     },
     {
+      "include": "#constants"
+    },
+    {
+      "include": "#datatypes"
+    },
+    {
       "include": "#keywords"
+    },
+    {
+      "include": "#keyword-operator"
     },
     {
       "include": "#named-args"
@@ -24,16 +41,47 @@
       "include": "#interpolation-strings"
     },
     {
-      "include": "#strings"
+      "include": "#string-quoted-raw-single"
+    },
+    {
+      "include": "#string-quoted-raw-double"
+    },
+    {
+      "include": "#string-quoted-triple"
+    },
+    {
+      "include": "#string-quoted-single"
+    },
+    {
+      "include": "#string-quoted-double"
+    },
+    {
+      "include": "#time-units"
     },
     {
       "include": "#ident"
     }
   ],
   "repository": {
+    "docblock": {
+      "name": "comment.block.documentation",
+      "match": "#!.*$"
+    },
     "comment": {
-      "name": "comment.line",
+      "name": "comment.line.number-sign",
       "match": "#.*$"
+    },
+    "constants": {
+      "name": "constant.language",
+      "match": "true|false|null"
+    },
+    "datatypes": {
+      "name": "storage.type",
+      "match": "(bool|int8|int16|int32|int64|int128|int|float|text|set)\\b"
+    },
+    "escape": {
+      "name": "constant.character.escape",
+      "match": "\\\\."
     },
     "keywords": {
       "patterns": [
@@ -42,6 +90,14 @@
           "match": "\\b(let|into|case|prql|type|module|internal|from|from_text|select|derive|filter|take|sort|join|aggregate|group|null|true|false)\\b"
         }
       ]
+    },
+    "keyword-operator": {
+      "name": "keyword.operator",
+      "match": "==|~=|\\+|-|\\*|!=|->|=>|<=|>=|&&|<|>"
+    },
+    "time-units": {
+      "name": "keyword.other.unit",
+      "match": "years|months|weeks|days|hours|minutes|seconds|milliseconds|microseconds"
     },
     "named-args": {
       "match": "(\\w+)\\s*:",
@@ -82,20 +138,55 @@
         {
           "name": "keyword.operator.new",
           "match": "\\{[^}]*}"
+        },
+        {
+          "include": "#escape"
         }
       ]
     },
-    "strings": {
+    "unicode-bidi": {
+      "name": "invalid.illegal",
+      "match": "(\u202A|\u202B|\u202D|\u202E|\u2066|\u2067|\u2068|\u202C|\u2069)"
+    },
+    "string-quoted-raw-single": {
+      "name": "string.quoted.single",
+      "begin": "r'",
+      "end": "'"
+    },
+    "string-quoted-raw-double": {
+      "name": "string.quoted.double",
+      "begin": "r\"",
+      "end": "\""
+    },
+    "string-quoted-single": {
+      "name": "string.quoted.single",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        {
+          "include": "#escape"
+        }
+      ]
+    },
+    "string-quoted-double": {
       "name": "string.quoted.double",
       "begin": "\"",
       "end": "\"",
       "patterns": [
         {
-          "name": "constant.character.escape",
-          "match": "\\\\."
+          "include": "#escape"
+        }
+      ]
+    },
+    "string-quoted-triple": {
+      "name": "string.quoted.triple",
+      "begin": "\"\"\"",
+      "end": "\"\"\"",
+      "patterns": [
+        {
+          "include": "#escape"
         }
       ]
     }
-  },
-  "scopeName": "source.prql"
+  }
 }
