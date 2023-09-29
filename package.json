@@ -183,7 +183,7 @@
     "watch": "tsc -w -p ./"
   },
   "devDependencies": {
-    "@types/node": "^20.7.1",
+    "@types/node": "^20.7.2",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.50.0",
