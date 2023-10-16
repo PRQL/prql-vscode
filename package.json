@@ -183,15 +183,15 @@
     "watch": "tsc -w -p ./"
   },
   "devDependencies": {
-    "@types/node": "^20.8.2",
-    "@typescript-eslint/eslint-plugin": "^5.61.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@types/node": "^20.8.6",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "eslint": "^8.51.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
     "@types/vscode": "^1.83.0",
     "prql-js": "^0.9.5",
-    "shiki": "^0.14.4"
+    "shiki": "^0.14.5"
   }
 }
