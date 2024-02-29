@@ -13,7 +13,6 @@ import {
   WebviewPanelOnDidChangeViewStateEvent,
   Uri,
 } from 'vscode';
-
 import * as shiki from 'shiki';
 
 import { readFileSync } from 'node:fs';
@@ -511,7 +510,7 @@ export class SqlPreview {
 
     // create html to display for the generated sql
     const highlighter = await this.getHighlighter();
-    const sqlHtml = highlighter.codeToHtml(sqlCode, { lang: 'sql' });
+    const sqlHtml = highlighter.codeToHtml(sqlCode, { lang: 'sql', theme: this.themeName});
 
     return { status: 'ok', sqlHtml: sqlHtml, sql: sqlCode };
   }
@@ -526,7 +525,8 @@ export class SqlPreview {
       return Promise.resolve(this._highlighter);
     }
     return (this._highlighter = await shiki.getHighlighter({
-      theme: this.themeName,
+      themes: [this.themeName],
+      langs: ['sql'],
     }));
   }
 
@@ -540,7 +540,7 @@ export class SqlPreview {
       .getConfiguration('workbench')
       .get<string>('colorTheme', 'dark-plus'); // default to dark plus
 
-    if (shiki.BUNDLED_THEMES.includes(colorTheme as shiki.Theme)) {
+    if (colorTheme in shiki.bundledThemes) {
       return colorTheme;
     }
 
@@ -549,7 +549,7 @@ export class SqlPreview {
       .toLowerCase()
       .replace('theme', '')
       .replace(/\s+/g, '-');
-    if (shiki.BUNDLED_THEMES.includes(colorTheme as shiki.Theme)) {
+    if (colorTheme in shiki.bundledThemes) {
       return colorTheme;
     }
 
