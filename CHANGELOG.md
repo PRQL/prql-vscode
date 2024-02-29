@@ -1,6 +1,9 @@
 # Changelog
 
-See [releases](https://github.com/PRQL/prql-vscode/releases) for a brief summary of added extension features, extension source code zip archive, and `prql-vscode-x.x.x.vsix` extension package download.
+Small changes and releases to include recent PRQL versions are not recorded
+here. Instead see [releases](https://github.com/PRQL/prql-vscode/releases) for a
+brief summary of added extension features, extension source code zip archive,
+and `prql-vscode-x.x.x.vsix` extension package download.
 
 ## 0.9.0
 
