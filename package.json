@@ -53,6 +53,19 @@
         "language": "prql",
         "scopeName": "source.prql",
         "path": "./syntaxes/prql.tmLanguage.json"
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.jsx",
+          "source.ts",
+          "source.tsx"
+        ],
+        "scopeName": "inline.prql",
+        "path": "./syntaxes/inline-prql.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.prql": "prql"
+        }
       }
     ],
     "commands": [
