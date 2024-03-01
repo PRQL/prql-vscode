@@ -1,6 +1,6 @@
 from_text format:json '[{"a":1, "b":1}]'
 loop (
     derive b_new = a + b
-    select [a=b, b=b_new]
+    select {a=b, b=b_new}
 )
 take 7
