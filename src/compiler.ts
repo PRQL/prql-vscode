@@ -1,6 +1,6 @@
 import { workspace, WorkspaceConfiguration } from 'vscode';
 
-import * as prql from 'prql-js';
+import * as prql from 'prqlc';
 import * as constants from './constants';
 
 export function compile(prqlString: string): string | ErrorMessage[] {
