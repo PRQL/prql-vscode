@@ -64,6 +64,44 @@ The `prql.target` extension setting default option value is `Generic`, which wil
 
 You can also disable this PRQL compiler option in vscode extension by setting `prql.target` to `Any`. When `prql.target` is set to `Any`, PRQL compiler will read the target SQL dialect from `.prql` file header as described in [PRQL Language Book](https://prql-lang.org/book/project/target.html). For example, setting `prql.target` to `Any` and adding `prql target:sql.postgres` on the first line of your `.prql` query file will produce SQL for `PostgreSQL` database. Otherwise, `Generic` SQL flavor will be used for the generated SQL.
 
-# Deploying and Development
+## Deploying the Extension 
 
-See the [DEPLOYING.md](./DEPLOYMING.md) documentation.
+This repo has the machinery to update the VSCode extension to the Microsoft Marketplace. 
+
+When there is a new version of `prqlc` in `npm`, dependabot will PR an update.
+Once per day, the _.github/dependabot.yml_ file checks NPM and compares the `dependencies.prqlc` property in _package.json_ to the latest version in NPM. If they differ, dependabot creates a PR for _package.json_.
+
+Once that has been merged, the following manual steps will publish an update for the extension: 
+
+- In _package.json_, update the `version` to match. This sets the version number of the extension itself.
+		
+- Run `npm install` to update the `package-lock.json`
+
+- Create a new release from Github. This will start a workflow to release the current version to the VS Code Marketplace.
+
+- NB: From time to time, check the `node-version` in the files_.github/workflows/pull-request.yaml_ and _.github/workflows/release.yml_. We track Node.js LTS - version 20 in June 2024.
+
+## Developing the Extension
+
+- Clone the repository and install dependencies:
+
+  ```sh
+  git clone git@github.com:prql/prql-vscode.git
+  cd prql-vscode && npm install
+  ```
+
+- Open the project in VS Code and start the TypeScript compilation task via
+  `Command Palette` -> `Tasks: Run build task` -> `npm: watch`. Alternatively,
+  you can run the compilation in your terminal directly:
+
+  ```sh
+  npm run watch
+  ```
+
+- Launch the extension in the Run and Debug panel. If you need to develop
+  against a local version of `prql-js`, use `npm link` and restart the
+  compilation task:
+
+  ```sh
+  npm link ../prql/prql-js
+  ```
