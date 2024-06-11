@@ -64,22 +64,22 @@ The `prql.target` extension setting default option value is `Generic`, which wil
 
 You can also disable this PRQL compiler option in vscode extension by setting `prql.target` to `Any`. When `prql.target` is set to `Any`, PRQL compiler will read the target SQL dialect from `.prql` file header as described in [PRQL Language Book](https://prql-lang.org/book/project/target.html). For example, setting `prql.target` to `Any` and adding `prql target:sql.postgres` on the first line of your `.prql` query file will produce SQL for `PostgreSQL` database. Otherwise, `Generic` SQL flavor will be used for the generated SQL.
 
-## Deploying the Extension 
+## Deploying the Extension
 
-This repo has the machinery to update the VSCode extension to the Microsoft Marketplace. 
+This repo has the machinery to update the VSCode extension to the Microsoft Marketplace.
 
 When there is a new version of `prqlc` in `npm`, dependabot will PR an update.
 Once per day, the _.github/dependabot.yml_ file checks NPM and compares the `dependencies.prqlc` property in _package.json_ to the latest version in NPM. If they differ, dependabot creates a PR for _package.json_.
 
-Once that has been merged, the following manual steps will publish an update for the extension: 
+Once that has been merged, the following manual steps will publish an update for the extension:
 
 - In _package.json_, update the `version` to match. This sets the version number of the extension itself.
-		
+
 - Run `npm install` to update the `package-lock.json`
 
 - Create a new release from Github. This will start a workflow to release the current version to the VS Code Marketplace.
 
-- NB: From time to time, check the `node-version` in the files_.github/workflows/pull-request.yaml_ and _.github/workflows/release.yml_. We track Node.js LTS - version 20 in June 2024.
+- NB: From time to time, check the `node-version` in the files*.github/workflows/pull-request.yaml* and _.github/workflows/release.yml_. We track Node.js LTS - version 20 in June 2024.
 
 ## Developing the Extension
 
