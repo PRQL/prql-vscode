@@ -73,6 +73,8 @@ Once per day, the _.github/dependabot.yml_ file checks NPM and compares the `dep
 
 Once that has been merged, the following manual steps will publish an update for the extension: 
 
+- Update the _CHANGELOG.md_ file, as needed
+
 - In _package.json_, update the `version` to match. This sets the version number of the extension itself.
 		
 - Run `npm install` to update the `package-lock.json`
