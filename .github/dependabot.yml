@@ -6,6 +6,8 @@ updates:
       interval: daily
     commit-message:
       prefix: 'chore: '
+    # We exclude labels throughout because of https://github.com/dependabot/dependabot-core/issues/7645#issuecomment-1986212847
+    labels: []
 
   - package-ecosystem: github-actions
     directory: '/'
@@ -13,3 +15,4 @@ updates:
       interval: daily
     commit-message:
       prefix: 'chore: '
+    labels: []
