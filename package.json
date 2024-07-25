@@ -204,7 +204,7 @@
   },
   "dependencies": {
     "@types/vscode": "^1.91.0",
-    "prqlc": "^0.12.2",
+    "prqlc": "^0.13.0",
     "shiki": "^0.14.7"
   }
 }
