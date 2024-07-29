@@ -5,6 +5,10 @@ here. Instead see [releases](https://github.com/PRQL/prql-vscode/releases) for a
 brief summary of added extension features, extension source code zip archive,
 and `prql-vscode-x.x.x.vsix` extension package download.
 
+## 0.13.0 - 2024-07-25
+
+- Bump to 0.13.0
+
 ## 0.12.2 - 2024-06-11
 
 - Bump to 0.12.2
