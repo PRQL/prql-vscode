@@ -30,8 +30,8 @@ export function compile(prqlString: string): string | ErrorMessage[] {
         const errorMessages = JSON.parse((error as any).message);
         console.log(errorMessages);
         return errorMessages.inner as ErrorMessage[];
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch(_error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (_error) {
         throw error;
       }
     }
