@@ -48,7 +48,7 @@ You can use new `View PRQL Settings` PRQL editor context menu shortcut to access
 
 ### PRQL Settings
 
-PRQL extension Settings allow you to customize PRQL [compiler options](https://github.com/PRQL/prql/tree/main/prql-js#usage) and filenames of the generated SQL files. Use the ⚙️ PRQL Settings shortcut from the open PRQL document editor context menu to access and change these configuration options.
+PRQL extension Settings allow you to customize PRQL [compiler options](https://github.com/PRQL/prql/tree/main/prqlc/bindings/js#usage) and filenames of the generated SQL files. Use the ⚙️ PRQL Settings shortcut from the open PRQL document editor context menu to access and change these configuration options.
 
 | Setting                               | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -58,7 +58,7 @@ PRQL extension Settings allow you to customize PRQL [compiler options](https://g
 
 ### PRQL Target
 
-PRQL extension and the underlying [`prql-js`](https://github.com/PRQL/prql/tree/main/prql-js#usage) compiler used by this extension supports the following PRQL target dialect options: `Ansi`, `BigQuery`, `ClickHouse`, `DuckDb`, `Generic`, `MsSql`, `MySql`, `Postgres`, `SQLite`, `Snowflake`, and `Any`.
+PRQL extension and the underlying [`prqlc-js`](https://github.com/PRQL/prql/tree/main/prqlc/bindings/js#usage) compiler used by this extension supports the following PRQL target dialect options: `Ansi`, `BigQuery`, `ClickHouse`, `DuckDb`, `Generic`, `MsSql`, `MySql`, `Postgres`, `SQLite`, `Snowflake`, and `Any`.
 
 The `prql.target` extension setting default option value is `Generic`, which will produce SQL that should work with most database management systems. We recommend you set it to the target DB you are working with in your project [workspace settings](https://code.visualstudio.com/docs/getstarted/settings#_creating-user-and-workspace-settings).
 
