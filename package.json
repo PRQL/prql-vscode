@@ -199,7 +199,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.35.0",
     "@types/node": "^24.7.0",
-    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
     "@typescript-eslint/parser": "^8.46.0",
     "eslint": "^9.37.0",
     "typescript": "^5.9.3"
