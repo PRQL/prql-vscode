@@ -396,7 +396,7 @@ export class SqlPreview {
   }
 
   /**
-   * Reloads Sql Preview for the active PRQL document Uri or on vscode IDE realod.
+   * Reloads Sql Preview for the active PRQL document Uri or on vscode IDE reload.
    */
   public async refresh(): Promise<void> {
     // update view state

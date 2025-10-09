@@ -81,7 +81,7 @@ and `prql-vscode-x.x.x.vsix` extension package download.
   ([#65](https://github.com/PRQL/prql-vscode/issues/65))
 - Update CHANGELOG.md for v0.5.0 release
   ([#68](https://github.com/PRQL/prql-vscode/issues/68))
-- Add PRQL extension to Data Science and Fromatters categories
+- Add PRQL extension to Data Science and Formatters categories
   ([#70](https://github.com/PRQL/prql-vscode/issues/70))
 - Create and use new docs/images folder for extension features images in docs
   ([#72](https://github.com/PRQL/prql-vscode/issues/72))
