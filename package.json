@@ -205,7 +205,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@types/vscode": "^1.104.0",
+    "@types/vscode": "^1.105.0",
     "prqlc": "^0.13.4",
     "shiki": "^0.14.7"
   }
